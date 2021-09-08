@@ -3,6 +3,8 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson3.task1.isPrime
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Урок 4: списки
@@ -120,14 +122,23 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>): Double {
+    var result = 0.0
+    for (element in v) {
+        result += element.pow(2)
+    }
+    return sqrt(result)
+}
 
 /**
  * Простая (2 балла)
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>): Double {
+    if (list.isEmpty()) return 0.0
+    return list.sum() / list.size
+}
 
 /**
  * Средняя (3 балла)
@@ -137,7 +148,16 @@ fun mean(list: List<Double>): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    if (list.isNotEmpty()) {
+        val mean = list.sum() / list.size
+        for (i in 0 until list.size) {
+            list[i] -= mean
+        }
+        return list
+    }
+    return list
+}
 
 /**
  * Средняя (3 балла)
@@ -177,7 +197,26 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    val result = mutableListOf<Int>()
+    var num = n
+
+    while (num % 2 == 0) {
+        num /= 2
+        result.add(2)
+    }
+    while (num > 1) {
+        for (i in 3..n step 2) {
+            if (isPrime(i) and (num % i == 0)) {
+                num /= i
+                result.add(i)
+                break
+            }
+        }
+    }
+
+    return result
+}
 
 /**
  * Сложная (4 балла)
@@ -250,4 +289,77 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val result = mutableListOf<String>()
+    var currentDigit = 0
+    var num = n
+    while (num > 0) {
+        when (currentDigit % 3) {
+            0 -> {
+                if (currentDigit == 3) {
+                    when (num % 10) {
+                        1 -> result.add("тысяча")
+                        in 2..4 -> result.add("тысячи")
+                        else -> result.add("тысяч")
+                    }
+                }
+                if (num % 100 in 10..19){
+                    when (num % 100) {
+                        10 -> result.add("десять")
+                        11 -> result.add("одиннадцать")
+                        12 -> result.add("двенадцать")
+                        13 -> result.add("тринадцать")
+                        14 -> result.add("четырнадцать")
+                        15 -> result.add("пятнадцать")
+                        16 -> result.add("шестнадцать")
+                        17 -> result.add("семнадцать")
+                        18 -> result.add("восемнадцать")
+                        19 -> result.add("девятнадцать")
+                    }
+                    currentDigit++
+                    num /= 10
+                } else {
+                    when (num % 10) {
+                        1 -> if (currentDigit == 0) result.add("один") else result.add("одна")
+                        2 -> if (currentDigit == 0) result.add("два") else result.add("две")
+                        3 -> result.add("три")
+                        4 -> result.add("четыре")
+                        5 -> result.add("пять")
+                        6 -> result.add("шесть")
+                        7 -> result.add("семь")
+                        8 -> result.add("восемь")
+                        9 -> result.add("девять")
+                    }
+                }
+            }
+            1 -> {
+                when (num % 10) {
+                    2 -> result.add("двадцать")
+                    3 -> result.add("тридцать")
+                    4 -> result.add("сорок")
+                    5 -> result.add("пятьдесят")
+                    6 -> result.add("шестьдесят")
+                    7 -> result.add("семьдесят")
+                    8 -> result.add("восемьдесят")
+                    9 -> result.add("девяноста")
+                }
+            }
+            2 -> {
+                when (num % 10) {
+                    1 -> result.add("сто")
+                    2 -> result.add("двести")
+                    3 -> result.add("триста")
+                    4 -> result.add("четыреста")
+                    5 -> result.add("пятьсот")
+                    6 -> result.add("шестьсот")
+                    7 -> result.add("семьсот")
+                    8 -> result.add("восемьсот")
+                    9 -> result.add("девятьсот")
+                }
+            }
+        }
+        currentDigit++
+        num /= 10
+    }
+    return result.reversed().joinToString(separator = " ")
+}
