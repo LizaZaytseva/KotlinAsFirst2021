@@ -293,7 +293,87 @@ fun russian(n: Int): String {
     val result = mutableListOf<String>()
     var currentDigit = 0
     var num = n
+
+    val russianDigits = mutableListOf(
+        mutableListOf(
+            "один",
+            "два",
+            "три",
+            "четыре",
+            "пять",
+            "шесть",
+            "семь",
+            "восемь",
+            "девять"
+        ),
+        mutableListOf(
+            "десять",
+            "двадцать",
+            "тридцать",
+            "сорок",
+            "пятьдесят",
+            "шестьдесят",
+            "семьдесят",
+            "восемьдесят",
+            "девяноста"
+        ),
+        mutableListOf(
+            "сто",
+            "двести",
+            "триста",
+            "четыреста",
+            "пятьсот",
+            "шестьсот",
+            "семьсот",
+            "восемьсот",
+            "девятьсот"
+        ),
+        mutableListOf(
+            "одиннадцать",
+            "двенадцать",
+            "тринадцать",
+            "четырнадцать",
+            "пятнадцать",
+            "шестнадцать",
+            "семнадцать",
+            "восемнадцать",
+            "девятнадцать",
+        )
+    )
+
     while (num > 0) {
+        if (currentDigit == 3) {
+            when (num % 10) {
+                1 -> result.add("тысяча")
+                in 2..4 -> result.add("тысячи")
+                else -> result.add("тысяч")
+            }
+        }
+
+        if ((num % 100 in 10..19) and (currentDigit % 3 == 0)) {    // десять, одиннадцать, двенадцать и т. д.
+            result.add(russianDigits[3][num % 10 - 1])
+            num /= 10
+            currentDigit += 1
+        } else if ((num % 10 == 1) and (currentDigit % 3 == 0)) {   //склонения "один"
+            if (currentDigit == 0) {
+                result.add("один")
+            } else {
+                result.add("одна")
+            }
+        } else if ((num % 10 == 2) and (currentDigit % 3 == 0)) {   //склонения "два"
+            if (currentDigit == 0) {
+                result.add("два")
+            } else {
+                result.add("две")
+            }
+        } else {
+            if (num % 10 != 0) result.add(russianDigits[currentDigit % 3][num % 10 - 1])
+        }
+        num /= 10
+        currentDigit++
+    }
+
+    /* while (num > 0) {
         when (currentDigit % 3) {
             0 -> {
                 if (currentDigit == 3) {
@@ -303,7 +383,7 @@ fun russian(n: Int): String {
                         else -> result.add("тысяч")
                     }
                 }
-                if (num % 100 in 10..19){
+                if (num % 100 in 10..19) {
                     when (num % 100) {
                         10 -> result.add("десять")
                         11 -> result.add("одиннадцать")
@@ -360,6 +440,6 @@ fun russian(n: Int): String {
         }
         currentDigit++
         num /= 10
-    }
+    } */
     return result.reversed().joinToString(separator = " ")
 }
