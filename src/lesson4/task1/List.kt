@@ -345,9 +345,10 @@ fun russian(n: Int): String {
         var lastDigit = num % 10
 
         if (currentDigPos == 3) {
-            when (lastDigit) {
-                1 -> result.add("тысяча")
-                in 2..4 -> result.add("тысячи")
+            when {
+                num % 100 in 10..19 -> result.add("тысяч")
+                lastDigit == 1 -> result.add("тысяча")
+                lastDigit in 2..4 -> result.add("тысячи")
                 else -> result.add("тысяч")
             }
         }
