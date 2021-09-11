@@ -154,7 +154,6 @@ fun center(list: MutableList<Double>): MutableList<Double> {
         for (i in 0 until list.size) {
             list[i] -= mean
         }
-        return list
     }
     return list
 }
@@ -291,11 +290,10 @@ fun roman(n: Int): String = TODO()
  */
 fun russian(n: Int): String {
     val result = mutableListOf<String>()
-    var currentDigit = 0
+    var currentDigPos = 0
     var num = n
-
-    val russianDigits = mutableListOf(
-        mutableListOf(
+    val russianDigits = listOf(
+        listOf(
             "один",
             "два",
             "три",
@@ -304,9 +302,12 @@ fun russian(n: Int): String {
             "шесть",
             "семь",
             "восемь",
-            "девять"
+            "девять",
+            "десять",
+            "одна",
+            "две"
         ),
-        mutableListOf(
+        listOf(
             "десять",
             "двадцать",
             "тридцать",
@@ -315,9 +316,19 @@ fun russian(n: Int): String {
             "шестьдесят",
             "семьдесят",
             "восемьдесят",
-            "девяноста"
+            "девяноста",
+            "десять",
+            "одиннадцать",
+            "двенадцать",
+            "тринадцать",
+            "четырнадцать",
+            "пятнадцать",
+            "шестнадцать",
+            "семнадцать",
+            "восемнадцать",
+            "девятнадцать"
         ),
-        mutableListOf(
+        listOf(
             "сто",
             "двести",
             "триста",
@@ -327,119 +338,36 @@ fun russian(n: Int): String {
             "семьсот",
             "восемьсот",
             "девятьсот"
-        ),
-        mutableListOf(
-            "одиннадцать",
-            "двенадцать",
-            "тринадцать",
-            "четырнадцать",
-            "пятнадцать",
-            "шестнадцать",
-            "семнадцать",
-            "восемнадцать",
-            "девятнадцать",
         )
     )
 
     while (num > 0) {
-        if (currentDigit == 3) {
-            when (num % 10) {
+        var lastDigit = num % 10
+
+        if (currentDigPos == 3) {
+            when (lastDigit) {
                 1 -> result.add("тысяча")
                 in 2..4 -> result.add("тысячи")
                 else -> result.add("тысяч")
             }
         }
 
-        if ((num % 100 in 10..19) and (currentDigit % 3 == 0)) {    // десять, одиннадцать, двенадцать и т. д.
-            result.add(russianDigits[3][num % 10 - 1])
-            num /= 10
-            currentDigit += 1
-        } else if ((num % 10 == 1) and (currentDigit % 3 == 0)) {   //склонения "один"
-            if (currentDigit == 0) {
-                result.add("один")
-            } else {
-                result.add("одна")
+        if (lastDigit != 0) {
+            if (currentDigPos % 3 == 0) {
+                if (num % 100 in 11..19) {
+                    lastDigit = num % 100
+                    currentDigPos++
+                    num /= 10
+                } else if (lastDigit in 1..2) {
+                    lastDigit += 10 * (currentDigPos / 3)
+                }
             }
-        } else if ((num % 10 == 2) and (currentDigit % 3 == 0)) {   //склонения "два"
-            if (currentDigit == 0) {
-                result.add("два")
-            } else {
-                result.add("две")
-            }
-        } else {
-            if (num % 10 != 0) result.add(russianDigits[currentDigit % 3][num % 10 - 1])
+            result.add(russianDigits[currentDigPos % 3][lastDigit - 1])
         }
+
         num /= 10
-        currentDigit++
+        currentDigPos++
     }
 
-    /* while (num > 0) {
-        when (currentDigit % 3) {
-            0 -> {
-                if (currentDigit == 3) {
-                    when (num % 10) {
-                        1 -> result.add("тысяча")
-                        in 2..4 -> result.add("тысячи")
-                        else -> result.add("тысяч")
-                    }
-                }
-                if (num % 100 in 10..19) {
-                    when (num % 100) {
-                        10 -> result.add("десять")
-                        11 -> result.add("одиннадцать")
-                        12 -> result.add("двенадцать")
-                        13 -> result.add("тринадцать")
-                        14 -> result.add("четырнадцать")
-                        15 -> result.add("пятнадцать")
-                        16 -> result.add("шестнадцать")
-                        17 -> result.add("семнадцать")
-                        18 -> result.add("восемнадцать")
-                        19 -> result.add("девятнадцать")
-                    }
-                    currentDigit++
-                    num /= 10
-                } else {
-                    when (num % 10) {
-                        1 -> if (currentDigit == 0) result.add("один") else result.add("одна")
-                        2 -> if (currentDigit == 0) result.add("два") else result.add("две")
-                        3 -> result.add("три")
-                        4 -> result.add("четыре")
-                        5 -> result.add("пять")
-                        6 -> result.add("шесть")
-                        7 -> result.add("семь")
-                        8 -> result.add("восемь")
-                        9 -> result.add("девять")
-                    }
-                }
-            }
-            1 -> {
-                when (num % 10) {
-                    2 -> result.add("двадцать")
-                    3 -> result.add("тридцать")
-                    4 -> result.add("сорок")
-                    5 -> result.add("пятьдесят")
-                    6 -> result.add("шестьдесят")
-                    7 -> result.add("семьдесят")
-                    8 -> result.add("восемьдесят")
-                    9 -> result.add("девяноста")
-                }
-            }
-            2 -> {
-                when (num % 10) {
-                    1 -> result.add("сто")
-                    2 -> result.add("двести")
-                    3 -> result.add("триста")
-                    4 -> result.add("четыреста")
-                    5 -> result.add("пятьсот")
-                    6 -> result.add("шестьсот")
-                    7 -> result.add("семьсот")
-                    8 -> result.add("восемьсот")
-                    9 -> result.add("девятьсот")
-                }
-            }
-        }
-        currentDigit++
-        num /= 10
-    } */
     return result.reversed().joinToString(separator = " ")
 }

@@ -112,19 +112,19 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    var threatRook = false
-    var threatBishop = false
+    var rookThreat = false
+    var bishopThreat = false
 
     if ((kingX == rookX) or (kingY == rookY)) {
-        threatRook = true
+        rookThreat = true
     }
     if (abs(kingY - bishopY) == abs(kingX - bishopX)) {
-        threatBishop = true
+        bishopThreat = true
     }
 
-    if (threatRook and threatBishop) return 3
-    if (threatRook) return 1
-    if (threatBishop) return 2
+    if (rookThreat and bishopThreat) return 3
+    if (rookThreat) return 1
+    if (bishopThreat) return 2
     return 0
 }
 
@@ -141,7 +141,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val minSide = minOf(a, b, c)
     val midSide = (a + b + c) - maxSide - minSide
 
-    if ((a >= b + c) or (b >= a + c) or (c >= a + b)) {
+    if (maxSide >= minSide + midSide) {
         return -1
     }
     if (maxSide.pow(2) == minSide.pow(2) + midSide.pow(2)) {
@@ -161,12 +161,4 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    if ((b < c) or (d < a)) {
-        return -1
-    }
-    if (b >= c) {
-        return (min(b, d) - max(a, c))
-    }
-    return (min(c, a) - max(b, d))
-}
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = if (min(b, d) - max(a, c) < 0) -1 else min(b, d) - max(a, c)
