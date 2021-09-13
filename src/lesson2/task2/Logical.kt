@@ -3,6 +3,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
+import lesson2.task1.midOf
 
 /**
  * Пример
@@ -60,11 +61,8 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val midSide = a + b + c - minOf(a, b, c) - maxOf(a, b, c)
+    val midSide = midOf(a, b, c)
     val minSide = minOf(a, b, c)
 
-    if ((minSide <= minOf(r, s)) and (midSide <= maxOf(r, s))) {
-        return true
-    }
-    return false
+    return ((minSide <= minOf(r, s)) and (midSide <= maxOf(r, s)))
 }

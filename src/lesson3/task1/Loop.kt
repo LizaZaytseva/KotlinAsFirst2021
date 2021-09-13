@@ -2,6 +2,7 @@
 
 package lesson3.task1
 
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -192,34 +193,63 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int {
-    var sqr = 1
-    var baseNum = 1
+interface NumberGenerator {
+    //fun generateNum1(num1: Int, num2: Int): Int
+    //fun generateNum2(num1: Int, num2: Int): Int
+
+    fun generateNums(num1: Int, num2: Int): Pair<Int, Int>
+}
+
+fun sequenceDigit(n: Int, generator: NumberGenerator): Int {
+    var num1 = 1
+    var num2 = 1
+
+
     var digits = 1
 
     while (digits < n) {
-        var digitsOfSqr = 0
+        var digitsOfNum1 = 0
 
-        baseNum++
-        sqr = baseNum * baseNum
 
-        var sqrTemp = sqr
+        val (n2, n1) = generator.generateNums(num1, num2) // Котлин не может деструктурировать пару в уже объявленные переменные
+        num2 = n2
+        num1 = n1
+        /*
+        Изначально я использовал отдельный генератор для каждого из чисел:
 
-        while (sqrTemp > 0) {
-            sqrTemp /= 10
-            digitsOfSqr++
+        num2 = generator.generateNum2(num1, num2)
+        num1 = generator.generateNum1(num1, num2)
+
+        Код этих генераторов ещё есть в комментах функций,
+        так как я не знаю, какая из реализаций лучше (с двумя генераторами или с одним)
+         */
+
+        var numTemp = num1
+
+        while (numTemp > 0) {
+            numTemp /= 10
+            digitsOfNum1++
         }
 
-        digits += digitsOfSqr
+        digits += digitsOfNum1
 
     }
 
-    while (digits > n) {
-        sqr /= 10
-        digits--
-    }
+    num1 /= 10.0.pow(digits - n).toInt()
 
-    return sqr % 10
+    return num1 % 10
+}
+
+
+
+fun squareSequenceDigit(n: Int): Int {
+    return sequenceDigit(n, object : NumberGenerator {
+        //override fun generateNum1(num1: Int, num2: Int): Int = num2 * num2
+
+        //override fun generateNum2(num1: Int, num2: Int): Int = num2 + 1
+
+        override fun generateNums(num1: Int, num2: Int): Pair<Int, Int> = Pair(num2 + 1, (num2 + 1) * (num2 + 1))
+    })
 }
 
 /**
@@ -232,30 +262,11 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var fib1 = 1
-    var fib2 = 1
-    var digits = 1
+    return sequenceDigit(n, object : NumberGenerator {
+        //override fun generateNum1(num1: Int, num2: Int): Int = num2 - num1
 
-    while (digits < n) {
-        var digitsOfFib2 = 0
-        var fibTemp = fib2
+        //override fun generateNum2(num1: Int, num2: Int): Int = num2 + num1
 
-        while (fibTemp > 0) {
-            fibTemp /= 10
-            digitsOfFib2++
-        }
-
-        digits += digitsOfFib2
-
-        fib2 += fib1
-        fib1 = fib2 - fib1
-
-    }
-
-    while (digits > n) {
-        fib1 /= 10
-        digits--
-    }
-
-    return fib1 % 10
+        override fun generateNums(num1: Int, num2: Int): Pair<Int, Int> = Pair(num2 + num1, num2 + num1 - num1)
+    })
 }

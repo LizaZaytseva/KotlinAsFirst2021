@@ -150,7 +150,7 @@ fun mean(list: List<Double>): Double {
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     if (list.isNotEmpty()) {
-        val mean = list.sum() / list.size
+        val mean = mean(list)
         for (i in 0 until list.size) {
             list[i] -= mean
         }
@@ -204,11 +204,13 @@ fun factorize(n: Int): List<Int> {
         num /= 2
         result.add(2)
     }
+    var start = 3
     while (num > 1) {
-        for (i in 3..n step 2) {
-            if (isPrime(i) and (num % i == 0)) {
+        for (i in start..n step 2) {
+            if (num % i == 0) {
                 num /= i
                 result.add(i)
+                start = i
                 break
             }
         }
