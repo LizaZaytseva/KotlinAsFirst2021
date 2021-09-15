@@ -3,6 +3,7 @@
 package lesson3.task1
 
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -241,10 +242,8 @@ fun squareSequenceDigit(n: Int): Int {
 fun fibSequenceDigit(n: Int): Int {
     return sequenceDigit(n, object : NumberGenerator {
         override fun generateNum(idx: Int): Int {
-            if ((idx == 1) || (idx == 2)) {
-                return 1
-            }
-            return generateNum(idx - 1) + generateNum(idx - 2)
+            val f = 1.6180339
+            return ((f.pow(idx.toDouble()) - (-f).pow((-idx).toDouble())) / (2 * f - 1)).roundToInt() //Формула Бине
         }
     })
 }
