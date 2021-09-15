@@ -242,7 +242,7 @@ fun squareSequenceDigit(n: Int): Int {
 fun fibSequenceDigit(n: Int): Int {
     return sequenceDigit(n, object : NumberGenerator {
         override fun generateNum(idx: Int): Int {
-            val f = 1.6180339
+            val f = 1.6180339887498948482
             return ((f.pow(idx.toDouble()) - (-f).pow((-idx).toDouble())) / (2 * f - 1)).roundToInt() //Формула Бине
         }
     })
