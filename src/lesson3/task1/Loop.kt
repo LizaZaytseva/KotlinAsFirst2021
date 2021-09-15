@@ -194,37 +194,20 @@ fun cos(x: Double, eps: Double): Double = TODO()
  * Использовать операции со строками в этой задаче запрещается.
  */
 interface NumberGenerator {
-    //fun generateNum1(num1: Int, num2: Int): Int
-    //fun generateNum2(num1: Int, num2: Int): Int
-
-    fun generateNums(num1: Int, num2: Int): Pair<Int, Int>
+    fun generateNum(idx: Int): Int
 }
 
 fun sequenceDigit(n: Int, generator: NumberGenerator): Int {
-    var num1 = 1
-    var num2 = 1
-
-
+    var idx = 1
+    var num = 1
     var digits = 1
 
     while (digits < n) {
         var digitsOfNum1 = 0
+        idx++
+        num = generator.generateNum(idx)
 
-
-        val (n2, n1) = generator.generateNums(num1, num2) // Котлин не может деструктурировать пару в уже объявленные переменные
-        num2 = n2
-        num1 = n1
-        /*
-        Изначально я использовал отдельный генератор для каждого из чисел:
-
-        num2 = generator.generateNum2(num1, num2)
-        num1 = generator.generateNum1(num1, num2)
-
-        Код этих генераторов ещё есть в комментах функций,
-        так как я не знаю, какая из реализаций лучше (с двумя генераторами или с одним)
-         */
-
-        var numTemp = num1
+        var numTemp = num
 
         while (numTemp > 0) {
             numTemp /= 10
@@ -232,23 +215,17 @@ fun sequenceDigit(n: Int, generator: NumberGenerator): Int {
         }
 
         digits += digitsOfNum1
-
     }
 
-    num1 /= 10.0.pow(digits - n).toInt()
+    num /= 10.0.pow(digits - n).toInt()
 
-    return num1 % 10
+    return num % 10
 }
-
 
 
 fun squareSequenceDigit(n: Int): Int {
     return sequenceDigit(n, object : NumberGenerator {
-        //override fun generateNum1(num1: Int, num2: Int): Int = num2 * num2
-
-        //override fun generateNum2(num1: Int, num2: Int): Int = num2 + 1
-
-        override fun generateNums(num1: Int, num2: Int): Pair<Int, Int> = Pair(num2 + 1, (num2 + 1) * (num2 + 1))
+        override fun generateNum(idx: Int): Int = idx * idx
     })
 }
 
@@ -263,10 +240,11 @@ fun squareSequenceDigit(n: Int): Int {
  */
 fun fibSequenceDigit(n: Int): Int {
     return sequenceDigit(n, object : NumberGenerator {
-        //override fun generateNum1(num1: Int, num2: Int): Int = num2 - num1
-
-        //override fun generateNum2(num1: Int, num2: Int): Int = num2 + num1
-
-        override fun generateNums(num1: Int, num2: Int): Pair<Int, Int> = Pair(num2 + num1, num2 + num1 - num1)
+        override fun generateNum(idx: Int): Int {
+            if ((idx == 1) || (idx == 2)) {
+                return 1
+            }
+            return generateNum(idx - 1) + generateNum(idx - 2)
+        }
     })
 }
