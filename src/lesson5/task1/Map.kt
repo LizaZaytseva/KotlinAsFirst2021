@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import java.util.*
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -277,7 +279,17 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    val map = mutableMapOf<Int, Int>()
+    for (i in list) {
+        if (map[number - i] == null) {
+            map[i] = list.indexOf(i)
+        } else {
+            return Pair(map.getValue(number - i), list.indexOf(i))
+        }
+    }
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -300,4 +312,37 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun knapsack(
+    cap: Int,
+    weight: MutableList<Int>,
+    price: MutableList<Int>,
+    name: MutableList<String>,
+    num: Int
+): Set<String> {
+    val res = IntArray(cap + 1) { 0 }
+    val sets = Array<MutableSet<String>>(cap + 1) { mutableSetOf() }
+
+    for (i in 0 until num) {
+        for (j in cap downTo weight[i]) {
+            if (res[j] < res[j - weight[i]] + price[i]) {
+                res[j] = res[j - weight[i]] + price[i]
+                sets[j] = sets[j - weight[i]]
+                sets[j].add(name[i])
+            }
+        }
+    }
+    return sets[cap]
+}
+
+
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val weight = mutableListOf<Int>()
+    val price = mutableListOf<Int>()
+    val name = mutableListOf<String>()
+    for ((key, value) in treasures) {
+        weight.add(value.first)
+        price.add(value.second)
+        name.add(key)
+    }
+    return knapsack(capacity, weight, price, name, treasures.size)
+}
