@@ -112,15 +112,9 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    var rookThreat = false
-    var bishopThreat = false
+    val rookThreat = (kingX == rookX) || (kingY == rookY)
+    val bishopThreat = abs(kingY - bishopY) == abs(kingX - bishopX)
 
-    if ((kingX == rookX) || (kingY == rookY)) {
-        rookThreat = true
-    }
-    if (abs(kingY - bishopY) == abs(kingX - bishopX)) {
-        bishopThreat = true
-    }
 
     if (rookThreat && bishopThreat) return 3
     if (rookThreat) return 1
@@ -137,7 +131,6 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun midOf(a: Double, b: Double, c: Double): Double = (a + b + c) - maxOf(a, b, c) - minOf(a, b, c)
-fun midOf(a: Int, b: Int, c: Int): Int = (a + b + c) - maxOf(a, b, c) - minOf(a, b, c)
 
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     val maxSide = maxOf(a, b, c)
@@ -150,7 +143,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     if (maxSide.pow(2) == minSide.pow(2) + midSide.pow(2)) {
         return 1
     }
-    if (maxSide.pow(2) > minSide.pow(2) + midSide.pow(2)){
+    if (maxSide.pow(2) > minSide.pow(2) + midSide.pow(2)) {
         return 2
     }
     return 0

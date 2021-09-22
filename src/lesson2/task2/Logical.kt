@@ -61,8 +61,8 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val midSide = midOf(a, b, c)
+    val midSide = midOf(a.toDouble(), b.toDouble(), c.toDouble()).toInt()
     val minSide = minOf(a, b, c)
 
-    return ((minSide <= minOf(r, s)) && (midSide <= maxOf(r, s)))
+    return (minSide <= minOf(r, s)) && (midSide <= maxOf(r, s))
 }
