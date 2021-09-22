@@ -236,4 +236,4 @@ fun squareSequenceDigit(n: Int): Int = sequenceDigit(n) { idx: Int -> idx * idx 
  * Использовать операции со строками в этой задаче запрещается.
  */
 
-fun fibSequenceDigit(n: Int): Int = sequenceDigit(n) { idx: Int -> fib(idx) }
+fun fibSequenceDigit(n: Int): Int = sequenceDigit(n, ::fib)
