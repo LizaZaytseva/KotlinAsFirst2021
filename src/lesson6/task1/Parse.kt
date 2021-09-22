@@ -176,6 +176,7 @@ fun plusMinus(expression: String): Int {
     }
     return sum
 }
+
 /**
  * Сложная (6 баллов)
  *
@@ -187,7 +188,7 @@ fun plusMinus(expression: String): Int {
  */
 fun firstDuplicateIndex(str: String): Int {
     val words = str.lowercase().split(" ")
-    val idxs = mutableListOf(words[0].length)
+    val idxs = mutableListOf(0)
     var currentIdx = words[0].length + 1
 
     for (i in 1 until words.size) {

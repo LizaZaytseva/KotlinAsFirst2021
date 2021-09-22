@@ -326,8 +326,7 @@ fun knapsack(
         for (j in cap downTo weight[i]) {
             if (res[j] < res[j - weight[i]] + price[i]) {
                 res[j] = res[j - weight[i]] + price[i]
-                sets[j] = sets[j - weight[i]]
-                sets[j].add(name[i])
+                sets[j] = (sets[j - weight[i]] + name[i]).toMutableSet()
             }
         }
     }
