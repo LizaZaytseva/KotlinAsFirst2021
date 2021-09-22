@@ -82,7 +82,10 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    val phi = (sqrt(5.0) + 1) / 2 // Золотое сечение
+    return ((phi.pow(n.toDouble()) - (-phi).pow((-n).toDouble())) / (2 * phi - 1)).roundToInt() //Формула Бине
+}
 
 /**
  * Простая (2 балла)
@@ -194,11 +197,8 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-interface NumberGenerator {
-    fun generateNum(idx: Int): Int
-}
 
-fun sequenceDigit(n: Int, generator: NumberGenerator): Int {
+fun sequenceDigit(n: Int, generate: (Int) -> Int): Int {
     var idx = 1
     var num = 1
     var digits = 1
@@ -206,7 +206,7 @@ fun sequenceDigit(n: Int, generator: NumberGenerator): Int {
     while (digits < n) {
         var digitsOfNum1 = 0
         idx++
-        num = generator.generateNum(idx)
+        num = generate(idx)
 
         var numTemp = num
 
@@ -224,11 +224,7 @@ fun sequenceDigit(n: Int, generator: NumberGenerator): Int {
 }
 
 
-fun squareSequenceDigit(n: Int): Int {
-    return sequenceDigit(n, object : NumberGenerator {
-        override fun generateNum(idx: Int): Int = idx * idx
-    })
-}
+fun squareSequenceDigit(n: Int): Int = sequenceDigit(n) { idx: Int -> idx * idx }
 
 /**
  * Сложная (5 баллов)
@@ -239,11 +235,5 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int {
-    return sequenceDigit(n, object : NumberGenerator {
-        override fun generateNum(idx: Int): Int {
-            val phi = (sqrt(5.0) + 1) / 2 // Золотое сечение
-            return ((phi.pow(idx.toDouble()) - (-phi).pow((-idx).toDouble())) / (2 * phi - 1)).roundToInt() //Формула Бине
-        }
-    })
-}
+
+fun fibSequenceDigit(n: Int): Int = sequenceDigit(n) { idx: Int -> fib(idx) }
