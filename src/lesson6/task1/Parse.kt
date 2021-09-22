@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import kotlin.IllegalArgumentException
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -138,8 +140,42 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
 
+fun isNumeric(str: String) = str.all { it in '0'..'9' }
+
+fun plusMinus(expression: String): Int {
+    val list = expression.split(" ")
+    var sum: Int
+
+    if (isNumeric(list[0]) && isNumeric(list.last())) {
+        sum = list[0].toInt()
+    } else {
+        throw IllegalArgumentException()
+    }
+
+    for (i in 2 until list.size step 2) {
+        if (isNumeric(list[i])) {
+            if (list[i - 1].length == 1) {
+                when (list[i - 1][0].code) {
+                    45 -> {
+                        sum -= list[i].toInt()
+                    }
+                    43 -> {
+                        sum += list[i].toInt()
+                    }
+                    else -> {
+                        throw IllegalArgumentException()
+                    }
+                }
+            } else {
+                throw  IllegalArgumentException()
+            }
+        } else {
+            throw  IllegalArgumentException()
+        }
+    }
+    return sum
+}
 /**
  * Сложная (6 баллов)
  *
@@ -149,7 +185,21 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val words = str.lowercase().split(" ")
+    val idxs = mutableListOf(words[0].length)
+    var currentIdx = words[0].length + 1
+
+    for (i in 1 until words.size) {
+        if (words[i] == words[i - 1]) {
+            return idxs[i - 1]
+        } else {
+            idxs.add(currentIdx)
+            currentIdx += words[i].length + 1
+        }
+    }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
