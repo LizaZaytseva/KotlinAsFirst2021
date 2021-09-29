@@ -2,8 +2,6 @@
 
 package lesson5.task1
 
-import java.util.*
-
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -281,11 +279,11 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val map = mutableMapOf<Int, Int>()
-    for (i in list) {
-        if (map[number - i] == null) {
-            map[i] = list.indexOf(i)
+    for ((idx, value) in list.withIndex()) {
+        if (map[number - value] == null) {
+            map[value] = idx
         } else {
-            return Pair(map.getValue(number - i), list.indexOf(i))
+            return Pair(map.getValue(number - value), idx)
         }
     }
     return Pair(-1, -1)
@@ -314,34 +312,37 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  */
 fun knapsack(
     cap: Int,
-    weight: MutableList<Int>,
-    price: MutableList<Int>,
-    name: MutableList<String>,
-    num: Int
+    weights: List<Int>,
+    prices: List<Int>,
+    names: List<String>,
 ): Set<String> {
-    val res = IntArray(cap + 1) { 0 }
-    val sets = Array<MutableSet<String>>(cap + 1) { mutableSetOf() }
 
-    for (i in 0 until num) {
-        for (j in cap downTo weight[i]) {
-            if (res[j] < res[j - weight[i]] + price[i]) {
-                res[j] = res[j - weight[i]] + price[i]
-                sets[j] = (sets[j - weight[i]] + name[i]).toMutableSet()
+    val amount = weights.size
+    // val bestOptions = Array<Pair<Int, Set<String>>>(cap + 1) { Pair(0, setOf()) }
+    val bestValue = IntArray(cap + 1) { 0 }
+    val bestValueTreasures = Array<Set<String>>(cap + 1) { setOf() }
+
+    for (i in 0 until amount) {
+        for (j in cap downTo weights[i]) {
+            val valueWithCurrentTreasure = bestValue[j - weights[i]] + prices[i]
+            if (bestValue[j] < valueWithCurrentTreasure) {
+                bestValue[j] = valueWithCurrentTreasure
+                bestValueTreasures[j] = bestValueTreasures[j - weights[i]] + names[i]
             }
         }
     }
-    return sets[cap]
+    return bestValueTreasures[cap]
 }
 
 
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    val weight = mutableListOf<Int>()
-    val price = mutableListOf<Int>()
-    val name = mutableListOf<String>()
+    val weights = mutableListOf<Int>()
+    val prices = mutableListOf<Int>()
+    val names = mutableListOf<String>()
     for ((key, value) in treasures) {
-        weight.add(value.first)
-        price.add(value.second)
-        name.add(key)
+        weights.add(value.first)
+        prices.add(value.second)
+        names.add(key)
     }
-    return knapsack(capacity, weight, price, name, treasures.size)
+    return knapsack(capacity, weights, prices, names)
 }

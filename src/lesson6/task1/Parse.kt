@@ -156,11 +156,11 @@ fun plusMinus(expression: String): Int {
     for (i in 2 until list.size step 2) {
         if (isNumeric(list[i])) {
             if (list[i - 1].length == 1) {
-                when (list[i - 1][0].code) {
-                    45 -> {
+                when (list[i - 1][0]) {
+                    '-' -> {
                         sum -= list[i].toInt()
                     }
-                    43 -> {
+                    '+' -> {
                         sum += list[i].toInt()
                     }
                     else -> {
@@ -188,16 +188,13 @@ fun plusMinus(expression: String): Int {
  */
 fun firstDuplicateIndex(str: String): Int {
     val words = str.lowercase().split(" ")
-    val idxs = mutableListOf(0)
-    var currentIdx = words[0].length + 1
+    var prevIdx = 0
 
     for (i in 1 until words.size) {
         if (words[i] == words[i - 1]) {
-            return idxs[i - 1]
-        } else {
-            idxs.add(currentIdx)
-            currentIdx += words[i].length + 1
+            return prevIdx
         }
+        prevIdx += words[i - 1].length + 1
     }
     return -1
 }

@@ -84,7 +84,7 @@ fun digitNumber(n: Int): Int = TODO()
  */
 fun fib(n: Int): Int {
     val phi = (sqrt(5.0) + 1) / 2 // Золотое сечение
-    return ((phi.pow(n.toDouble()) - (-phi).pow((-n).toDouble())) / (2 * phi - 1)).roundToInt() //Формула Бине
+    return ((phi.pow(n.toDouble()) - (-phi).pow((-n).toDouble())) / (2 * phi - 1)).roundToInt() // Формула Бине
 }
 
 /**
@@ -204,7 +204,7 @@ fun sequenceDigit(n: Int, generate: (Int) -> Int): Int {
     var digits = 1
 
     while (digits < n) {
-        var digitsOfNum1 = 0
+        var digitsOfNum = 0
         idx++
         num = generate(idx)
 
@@ -212,10 +212,10 @@ fun sequenceDigit(n: Int, generate: (Int) -> Int): Int {
 
         while (numTemp > 0) {
             numTemp /= 10
-            digitsOfNum1++
+            digitsOfNum++
         }
 
-        digits += digitsOfNum1
+        digits += digitsOfNum
     }
 
     num /= 10.0.pow(digits - n).toInt()
