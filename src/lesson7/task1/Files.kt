@@ -267,6 +267,8 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     TODO()
 }
 
+
+
 /**
  * Сложная (22 балла)
  *
@@ -312,8 +314,130 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+
+
+
+
+fun replaceWithTags(string: String): String {
+    var str = string
+    var startIndex = -1
+
+    var bOpened = false
+    var iOpened = false
+
+    var bOpener = -1
+    var iOpener = -1
+
+    while(startIndex != 0){
+        val bIndex = str.indexOf("**", startIndex)
+        val iIndex = str.indexOf("*", startIndex)
+
+        if (bIndex == iIndex) {
+            if (bIndex == -1) {
+                startIndex = 0
+            } else if (bIndex == str.indexOf("***", startIndex)){
+                if (!bOpened and !iOpened) {
+                    str = str.replaceFirst("**", "<b>")
+                    bOpened = true
+                    bOpener = bIndex
+
+                    startIndex = bIndex + 1
+
+                } else if (bOpened and iOpened) {
+                    if (bOpener < iOpener) {
+
+                        str = str.replaceFirst("*", "</i>")
+                        iOpened = false
+
+                        startIndex = iIndex + 1
+
+                    } else {
+                        str = str.replaceFirst("**", "</b>")
+                        bOpened = false
+
+                        startIndex = bIndex + 1
+
+                    }
+                } else if (bOpened) {
+                    str = str.replaceFirst("**", "</b>")
+                    bOpened = false
+                    startIndex = bIndex + 1
+                } else {
+                    str = str.replaceFirst("*", "</i>")
+                    iOpened = false
+                    startIndex = iIndex + 1
+                }
+            } else {
+                startIndex = bIndex + 1
+                if (bOpened) {
+                    str = str.replaceFirst("**", "</b>")
+                    bOpened = false
+                } else {
+                    str = str.replaceFirst("**", "<b>")
+                    bOpened = true
+                    bOpener = bIndex
+                }
+            }
+        } else if (((bIndex < iIndex) and (bIndex != -1)) or (iIndex == -1)) {
+            startIndex = bIndex + 1
+            if (bOpened) {
+                str = str.replaceFirst("**", "</b>")
+                bOpened = false
+            } else {
+                str = str.replaceFirst("**", "<b>")
+                bOpened = true
+                bOpener = bIndex
+            }
+        } else if ((bIndex > iIndex) or (bIndex == -1)) {
+            startIndex = iIndex + 1
+            if (iOpened) {
+                str = str.replaceFirst("*", "</i>")
+                iOpened = false
+            } else {
+                str = str.replaceFirst("*", "<i>")
+                iOpened = true
+                iOpener = bIndex
+            }
+        }
+
+    }
+
+    var sOpened = false
+    startIndex = -1
+    while (startIndex != 0) {
+        startIndex = str.indexOf("~~", startIndex) + 1
+        if (startIndex != 0) {
+            if (sOpened) {
+                str = str.replaceFirst("~~", "</s>")
+                sOpened = false
+            } else {
+                str = str.replaceFirst("~~", "<s>")
+                sOpened = true
+            }
+        }
+    }
+
+
+    return str
+}
+
+
+// Я ещё над ним поработаю, чтобы сделать короче
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    writer.write("<html><body><p>")
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) {
+            writer.newLine()
+            writer.write("</p><p>")
+        } else {
+            writer.newLine()
+            writer.write(replaceWithTags(line))
+        }
+    }
+    writer.newLine()
+    writer.write("</p></body></html>")
+    writer.close()
 }
 
 /**
