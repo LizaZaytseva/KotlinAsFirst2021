@@ -313,18 +313,17 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
 fun knapsack(
     cap: Int,
     weights: List<Int>,
-    prices: List<Int>,
+    value: List<Int>,
     names: List<String>,
 ): Set<String> {
 
     val amount = weights.size
-    // val bestOptions = Array<Pair<Int, Set<String>>>(cap + 1) { Pair(0, setOf()) }
     val bestValue = IntArray(cap + 1) { 0 }
     val bestValueTreasures = Array<Set<String>>(cap + 1) { setOf() }
 
     for (i in 0 until amount) {
         for (j in cap downTo weights[i]) {
-            val valueWithCurrentTreasure = bestValue[j - weights[i]] + prices[i]
+            val valueWithCurrentTreasure = bestValue[j - weights[i]] + value[i]
             if (bestValue[j] < valueWithCurrentTreasure) {
                 bestValue[j] = valueWithCurrentTreasure
                 bestValueTreasures[j] = bestValueTreasures[j - weights[i]] + names[i]
