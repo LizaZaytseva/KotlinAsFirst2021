@@ -430,10 +430,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     writer.write("<html><body><p>")
     var prevWasEmpty = false
     for (line in File(inputName).readLines()) {
-        if ((line.isEmpty() or (line == "\t") or (line == " ")) and !prevWasEmpty) {
-            writer.newLine()
-            writer.write("</p><p>")
-            prevWasEmpty = true
+        if ((line.isEmpty() or (line == "\t")) or (line == " ")) {
+            if (!prevWasEmpty) {
+                writer.newLine()
+                writer.write("</p><p>")
+                prevWasEmpty = true
+            }
         } else {
             writer.newLine()
             writer.write(replaceWithTags(line))
