@@ -63,7 +63,14 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty() || !line.startsWith("_")) {
+            writer.write(line)
+            writer.newLine()
+        }
+    }
+    writer.close()
 }
 
 /**
@@ -75,7 +82,31 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countOverlappingSubstrings(string: String, substring: String): Int {
+    var result = 0
+    var startIndex = -1
+    while (startIndex != 0) {
+        startIndex = string.indexOf(substring, startIndex) + 1
+        if (startIndex != 0) result++
+    }
+    return result
+}
+
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+
+
+    val map = substrings.associateWith { 0 }.toMutableMap()
+
+    for (line in File(inputName).readLines()) {
+        if (line.isNotEmpty()) {
+            for (substring in substrings) {
+                map[substring] = map[substring]!! + countOverlappingSubstrings(line.lowercase(), substring.lowercase())
+            }
+        }
+    }
+
+    return map
+}
 
 
 /**
