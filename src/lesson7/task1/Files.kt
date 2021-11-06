@@ -456,7 +456,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     if (!prevWasEmpty) {
         writer.write("</p>")
     }
-    if (File(inputName).readLines().last() == "\t") {
+    if ((File(inputName).readLines().isNotEmpty()) && (File(inputName).readLines().last() == "\t")) {
         writer.write("<p></p>")
     }
     writer.write("</body></html>")
