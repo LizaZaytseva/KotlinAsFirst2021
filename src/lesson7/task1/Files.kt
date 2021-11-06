@@ -434,12 +434,19 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         writer.write("<p>")
     }
     for (line in File(inputName).readLines()) {
-        if ((line.isEmpty() or (line == "\t")) or (line == " ")) {
+        if (line.isEmpty()  or (line == " ")) {
             if (!prevWasEmpty) {
                 writer.newLine()
                 writer.write("</p>")
                 prevWasEmpty = true
             }
+
+        } else if (line == "\t") {
+            if (prevWasEmpty) {
+                writer.newLine()
+                writer.write("<p>")
+            }
+            prevWasEmpty = false
         } else {
             if (prevWasEmpty) {
                 writer.newLine()
