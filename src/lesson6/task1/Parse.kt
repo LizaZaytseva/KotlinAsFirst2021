@@ -144,7 +144,7 @@ fun bestHighJump(jumps: String): Int = TODO()
 fun isNumeric(str: String) = str.all { it in '0'..'9' }
 
 fun plusMinus(expression: String): Int {
-    if (expression.matches(Regex(("""([0-9]+ (\+|\-) )*[0-9]+""")))) {
+    if (expression.matches(Regex("([0-9]+ ([+\\-]) )*[0-9]+"))) {
         val list = expression.split(" ")
         var sum = list[0].toInt()
 
