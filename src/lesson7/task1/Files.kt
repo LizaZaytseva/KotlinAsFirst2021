@@ -94,10 +94,9 @@ fun countOverlappingSubstrings(string: String, substring: String): Int {
 
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val map = substrings.associateWith { 0 }.toMutableMap()
-
     for (line in File(inputName).readLines()) {
         if (line.isNotEmpty()) {
-            for (substring in substrings) {
+            for (substring in map.keys) {
                 if (line.lowercase().contains(substring.lowercase())) {
                     map[substring] =
                         map[substring]!! + countOverlappingSubstrings(line.lowercase(), substring.lowercase())
