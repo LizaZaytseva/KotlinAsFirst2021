@@ -444,9 +444,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         } else if (line == "\t") {
             if (prevWasEmpty) {
                 writer.newLine()
-                writer.write("<p>")
+                writer.write("<p></p>")
             }
-            prevWasEmpty = false
         } else {
             if (prevWasEmpty) {
                 writer.newLine()
