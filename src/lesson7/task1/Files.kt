@@ -433,10 +433,9 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         ((File(inputName).readLines().size == 1) && (File(inputName).readLines()[0].isEmpty()))) {
         writer.write("<p></p>")
     }
-    val blankLine = setOf<String>("", " ", "  ", "\t", "\t ", "\t  ")
 
     for (line in File(inputName).readLines()) {
-        if (line.isEmpty() || (line in blankLine)) {
+        if (line.isEmpty() || (line.matches(Regex("[(\t) ]")))) {
             if (!prevWasEmpty) {
                 writer.newLine()
                 writer.write("</p>")
