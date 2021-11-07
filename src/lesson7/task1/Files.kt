@@ -456,11 +456,11 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     if (!prevWasEmpty) {
         writer.write("</p>")
     }
-    if ((File(inputName).readLines().size > 2) && (File(inputName).readLines().last() == "\t")) {
-        val size = File(inputName).readLines().size
-        if (File(inputName).readLines()[size - 1].isEmpty()) {
-            writer.write("<p></p>")
-        }
+    if ((File(inputName).readLines().size > 2) && (File(inputName).readLines().last() == "\t")) { //Я так и не понял
+        val size = File(inputName).readLines().size                                               //почему в одном из
+        if (File(inputName).readLines()[size - 1].isEmpty()) {                                    //тестов табуляция
+            writer.write("<p></p>")                                                           //в конце файла должна
+        }                                                                                         //выделяться абзацем
     }
     writer.write("</body></html>")
     writer.close()
