@@ -35,7 +35,7 @@ class OpenHashSet<T>(val capacity: Int) {
     /**
      * Признак пустоты
      */
-    fun isEmpty(): Boolean = (added == 0)
+    fun isEmpty(): Boolean = (size == 0)
 
     /**
      * Добавление элемента.
@@ -68,7 +68,7 @@ class OpenHashSet<T>(val capacity: Int) {
             return false
         }
         for (element in elements) {
-            if (!other.contains(element)) {
+            if (element != null && !other.contains(element)) {
                 return false
             }
         }
@@ -76,7 +76,7 @@ class OpenHashSet<T>(val capacity: Int) {
     }
 
     override fun hashCode(): Int {
-        var result = 1
+        var result = size
         for (element in elements) {
             if (element != null) {
                 result = (result * 31) + element.hashCode()
@@ -84,6 +84,4 @@ class OpenHashSet<T>(val capacity: Int) {
         }
         return result
     }
-
-
 }
