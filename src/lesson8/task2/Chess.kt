@@ -2,12 +2,16 @@
 
 package lesson8.task2
 
+import lesson4.task1.abs
+import ru.spbstu.wheels.currentPlatform
+
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
  * Горизонтали нумеруются снизу вверх, вертикали слева направо.
  */
 data class Square(val column: Int, val row: Int) {
+
     /**
      * Пример
      *
@@ -22,7 +26,12 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = TODO()
+    fun notation(): String {
+        if (inside()) {
+            return (96 + column).toChar() + row.toString()
+        }
+        return ""
+    }
 }
 
 /**
@@ -32,7 +41,12 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException
  */
-fun square(notation: String): Square = TODO()
+fun square(notation: String): Square {
+    if (notation.matches(Regex("[a-h][1-8]"))) {
+        return Square(notation[0].code - 96, Character.getNumericValue(notation[1]))
+    }
+    throw IllegalArgumentException()
+}
 
 /**
  * Простая (2 балла)
@@ -156,7 +170,27 @@ fun kingMoveNumber(start: Square, end: Square): Int = TODO()
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    val result = mutableListOf(start)
+    var currentCol = start.column
+    var currentRow = start.row
+    var colDif = end.column - currentCol
+    var rowDif = end.row - currentRow
+    while ((colDif != 0) || (rowDif != 0)) {
+        if (colDif != 0) {
+            currentCol += colDif / kotlin.math.abs(colDif)
+            colDif = end.column - currentCol
+        }
+
+
+        if (rowDif != 0) {
+            currentRow += rowDif / kotlin.math.abs(rowDif)
+            rowDif = end.row - currentRow
+        }
+        result.add(Square(currentCol, currentRow))
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
