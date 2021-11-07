@@ -21,8 +21,8 @@ import kotlin.math.pow
  * Нули в середине и в конце пропускаться не должны, например: x^3+2x+1 --> Polynom(1.0, 2.0, 0.0, 1.0)
  * Старшие коэффициенты, равные нулю, игнорировать, например Polynom(0.0, 0.0, 5.0, 3.0) соответствует 5x+3
  */
-class Polynom(vararg coeffs: Double) {
-    val coeffs = coeffs
+class Polynom(private vararg val coeffs: Double) {
+
     /**
      * Геттер: вернуть значение коэффициента при x^i
      */
@@ -58,17 +58,55 @@ class Polynom(vararg coeffs: Double) {
     /**
      * Сложение
      */
-    operator fun plus(other: Polynom): Polynom = TODO()
+    operator fun plus(other: Polynom): Polynom {
+        val length = maxOf(this.degree(), other.degree())
+        val thisDifference = length - this.degree()
+        val otherDifference = length - other.degree()
+        val coeffs = DoubleArray(length + 1)
+        for (i in 0..length) {
+            var currentCoeff = 0.0
+            if (i - thisDifference >= 0) {
+                currentCoeff += this.coeff(this.degree() - (i - thisDifference))
+            }
+            if (i - otherDifference >= 0) {
+                currentCoeff += other.coeff(other.degree() - (i - otherDifference))
+            }
+            coeffs[i] = currentCoeff
+        }
+        return Polynom(*coeffs)
+    }
 
     /**
      * Смена знака (при всех слагаемых)
      */
-    operator fun unaryMinus(): Polynom = TODO()
+    operator fun unaryMinus(): Polynom {
+        val newCoeffs = DoubleArray(this.degree() + 1)
+        for (i in newCoeffs.indices) {
+            newCoeffs[i] = -coeffs[i]
+        }
+        return Polynom(*newCoeffs)
+    }
 
     /**
      * Вычитание
      */
-    operator fun minus(other: Polynom): Polynom = TODO()
+    operator fun minus(other: Polynom): Polynom {
+        val length = maxOf(this.degree(), other.degree())
+        val thisDifference = length - this.degree()
+        val otherDifference = length - other.degree()
+        val coeffs = DoubleArray(length + 1)
+        for (i in 0..length) {
+            var currentCoeff = 0.0
+            if (i - thisDifference >= 0) {
+                currentCoeff += this.coeff(this.degree() - (i - thisDifference))
+            }
+            if (i - otherDifference >= 0) {
+                currentCoeff -= other.coeff(other.degree() - (i - otherDifference))
+            }
+            coeffs[i] = currentCoeff
+        }
+        return Polynom(*coeffs)
+    }
 
     /**
      * Умножение
