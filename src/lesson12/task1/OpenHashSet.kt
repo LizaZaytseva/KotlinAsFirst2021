@@ -75,7 +75,15 @@ class OpenHashSet<T>(val capacity: Int) {
         return true
     }
 
-    override fun hashCode(): Int = size
+    override fun hashCode(): Int {
+        var result = 1
+        for (element in elements) {
+            if (element != null) {
+                result = (result * 31) + element.hashCode()
+            }
+        }
+        return result
+    }
 
 
 }
