@@ -76,7 +76,7 @@ class OpenHashSet<T>(val capacity: Int) {
     }
 
     override fun hashCode(): Int {
-        var result = size
+        var result = 13
         for (element in elements) {
             if (element != null) {
                 result = (result * 31) + element.hashCode()
