@@ -63,14 +63,15 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
-        if (line.isEmpty() || !line.startsWith("_")) {
-            writer.write(line)
-            writer.newLine()
+    File(outputName).bufferedWriter().use {
+        for (line in File(inputName).readLines()) {
+            if (line.isEmpty() || !line.startsWith("_")) {
+                it.write(line)
+                it.newLine()
+            }
         }
+        it.close()
     }
-    writer.close()
 }
 
 /**
@@ -95,13 +96,11 @@ fun countOverlappingSubstrings(string: String, substring: String): Int {
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val map = substrings.associateWith { 0 }.toMutableMap()
     for (line in File(inputName).readLines()) {
-        if (line.isNotEmpty()) {
-            for (substring in map.keys) {
-                if (line.lowercase().contains(substring.lowercase())) {
-                    map[substring] =
-                        map[substring]!! + countOverlappingSubstrings(line.lowercase(), substring.lowercase())
-                }
-            }
+        if (line.isEmpty()) {
+            continue
+        }
+        for (substring in map.keys) {
+            map[substring] = map[substring]!! + countOverlappingSubstrings(line.lowercase(), substring.lowercase())
         }
     }
 

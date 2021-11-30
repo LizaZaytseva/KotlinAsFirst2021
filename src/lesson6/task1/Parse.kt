@@ -141,64 +141,26 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 
-fun isNumeric(str: String) = str.all { it in '0'..'9' }
 
 fun plusMinus(expression: String): Int {
-    if (expression.matches(Regex("([0-9]+ ([+\\-]) )*[0-9]+"))) {
-        val list = expression.split(" ")
-        var sum = list[0].toInt()
-
-        for (i in 2 until list.size step 2) {
-            when (list[i - 1][0]) {
-                '-' -> {
-                    sum -= list[i].toInt()
-                }
-                '+' -> {
-                    sum += list[i].toInt()
-                }
-            }
-        }
-
-        return sum
-    } else {
-        throw IllegalArgumentException()
+    if (!expression.matches(Regex("(\\d+ ([+\\-]) )*\\d+"))) {
+        throw IllegalArgumentException("Invalid expression")
     }
-
-    /*
-
     val list = expression.split(" ")
-    var sum: Int
-
-    if (isNumeric(list[0]) && isNumeric(list.last())) {
-        sum = list[0].toInt()
-    } else {
-        throw IllegalArgumentException()
-    }
+    var sum = list[0].toInt()
 
     for (i in 2 until list.size step 2) {
-        if (isNumeric(list[i])) {
-            if (list[i - 1].length == 1) {
-                when (list[i - 1][0]) {
-                    '-' -> {
-                        sum -= list[i].toInt()
-                    }
-                    '+' -> {
-                        sum += list[i].toInt()
-                    }
-                    else -> {
-                        throw IllegalArgumentException()
-                    }
-                }
-            } else {
-                throw  IllegalArgumentException()
+        when (list[i - 1][0]) {
+            '-' -> {
+                sum -= list[i].toInt()
             }
-        } else {
-            throw  IllegalArgumentException()
+            '+' -> {
+                sum += list[i].toInt()
+            }
         }
     }
-    return sum
 
-     */
+    return sum
 }
 
 

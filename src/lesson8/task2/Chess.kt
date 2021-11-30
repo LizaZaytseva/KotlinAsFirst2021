@@ -4,6 +4,7 @@ package lesson8.task2
 
 import lesson4.task1.abs
 import ru.spbstu.wheels.currentPlatform
+import kotlin.math.abs
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -28,7 +29,7 @@ data class Square(val column: Int, val row: Int) {
      */
     fun notation(): String {
         if (inside()) {
-            return (96 + column).toChar() + row.toString()
+            return ('a' - 1 + column) + row.toString()
         }
         return ""
     }
@@ -176,15 +177,15 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
     var currentRow = start.row
     var colDif = end.column - currentCol
     var rowDif = end.row - currentRow
-    while ((colDif != 0) || (rowDif != 0)) {
+    while (colDif != 0 || rowDif != 0) {
         if (colDif != 0) {
-            currentCol += colDif / kotlin.math.abs(colDif)
+            currentCol += colDif / abs(colDif)
             colDif = end.column - currentCol
         }
 
 
         if (rowDif != 0) {
-            currentRow += rowDif / kotlin.math.abs(rowDif)
+            currentRow += rowDif / abs(rowDif)
             rowDif = end.row - currentRow
         }
         result.add(Square(currentCol, currentRow))

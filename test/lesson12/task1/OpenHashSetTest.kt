@@ -69,6 +69,9 @@ class OpenHashSetTest {
         assertTrue(set1 == set2)
         set1.add(10)
         assertFalse(set1 == set2)
+        val set3 = OpenHashSet<Int>(8)
+        val set4 = OpenHashSet<Int>(4)
+        assertTrue(set3 == set4)
     }
 
     @Test
@@ -82,6 +85,18 @@ class OpenHashSetTest {
         set2.add(1)
         set2.add(3)
         set2.add(6)
+        val hashCode1 = set1.hashCode()
+        val hachCode2 = set2.hashCode()
         assertTrue(set1.hashCode() == set2.hashCode())
+
+        val set3 = OpenHashSet<Char>(8)
+        set3.add('a')
+        set3.add('b')
+        set3.add('c')
+        val set4 = OpenHashSet<Char>(4)
+        set4.add('a')
+        set4.add('b')
+        set4.add('c')
+        assertTrue(set3.hashCode() == set4.hashCode())
     }
 }

@@ -21,8 +21,10 @@ import kotlin.math.pow
  * Нули в середине и в конце пропускаться не должны, например: x^3+2x+1 --> Polynom(1.0, 2.0, 0.0, 1.0)
  * Старшие коэффициенты, равные нулю, игнорировать, например Polynom(0.0, 0.0, 5.0, 3.0) соответствует 5x+3
  */
-class Polynom(private vararg val coeffs: Double) {
+class Polynom(vararg coeffs: Double) {
 
+
+    private val coeffs = coeffs
     /**
      * Геттер: вернуть значение коэффициента при x^i
      */
@@ -59,11 +61,11 @@ class Polynom(private vararg val coeffs: Double) {
      * Сложение
      */
     operator fun plus(other: Polynom): Polynom {
-        val length = maxOf(this.degree(), other.degree())
-        val thisDifference = length - this.degree()
-        val otherDifference = length - other.degree()
-        val coeffs = DoubleArray(length + 1)
-        for (i in 0..length) {
+        val newDegree = maxOf(this.degree(), other.degree())
+        val thisDifference = newDegree - this.degree()
+        val otherDifference = newDegree - other.degree()
+        val newCoeffs = DoubleArray(newDegree + 1)
+        for (i in 0..newDegree) {
             var currentCoeff = 0.0
             if (i - thisDifference >= 0) {
                 currentCoeff += this.coeff(this.degree() - (i - thisDifference))
@@ -71,9 +73,9 @@ class Polynom(private vararg val coeffs: Double) {
             if (i - otherDifference >= 0) {
                 currentCoeff += other.coeff(other.degree() - (i - otherDifference))
             }
-            coeffs[i] = currentCoeff
+            newCoeffs[i] = currentCoeff
         }
-        return Polynom(*coeffs)
+        return Polynom(*newCoeffs)
     }
 
     /**
@@ -91,11 +93,11 @@ class Polynom(private vararg val coeffs: Double) {
      * Вычитание
      */
     operator fun minus(other: Polynom): Polynom {
-        val length = maxOf(this.degree(), other.degree())
-        val thisDifference = length - this.degree()
-        val otherDifference = length - other.degree()
-        val coeffs = DoubleArray(length + 1)
-        for (i in 0..length) {
+        val newDegree = maxOf(this.degree(), other.degree())
+        val thisDifference = newDegree - this.degree()
+        val otherDifference = newDegree - other.degree()
+        val newCoeffs = DoubleArray(newDegree + 1)
+        for (i in 0..newDegree) {
             var currentCoeff = 0.0
             if (i - thisDifference >= 0) {
                 currentCoeff += this.coeff(this.degree() - (i - thisDifference))
@@ -103,15 +105,24 @@ class Polynom(private vararg val coeffs: Double) {
             if (i - otherDifference >= 0) {
                 currentCoeff -= other.coeff(other.degree() - (i - otherDifference))
             }
-            coeffs[i] = currentCoeff
+            newCoeffs[i] = currentCoeff
         }
-        return Polynom(*coeffs)
+        return Polynom(*newCoeffs)
     }
 
     /**
      * Умножение
      */
-    operator fun times(other: Polynom): Polynom = TODO()
+    operator fun times(other: Polynom): Polynom {
+        val newDegree = this.degree() + other.degree()
+        val newCoeffs = DoubleArray(newDegree + 1)
+        for (i in 0..this.degree()) {
+            for (j in 0..other.degree()) {
+                newCoeffs[i + j] += this.coeff(i) * other.coeff(j)
+            }
+        }
+        return Polynom(*newCoeffs.reversed().toDoubleArray())
+    }
 
     /**
      * Деление
@@ -131,7 +142,17 @@ class Polynom(private vararg val coeffs: Double) {
     /**
      * Сравнение на равенство
      */
-    override fun equals(other: Any?): Boolean = TODO()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Polynom) return false
+        if (this.degree() != other.degree()) return false
+        for (i in coeffs.indices) {
+            if (this.coeff(i) != other.coeff(i)) {
+                return false
+            }
+        }
+        return true
+    }
 
     /**
      * Получение хеш-кода
