@@ -142,7 +142,8 @@ class Polynom(vararg coeffs: Double) {
     /**
      * Сравнение на равенство
      */
-    override fun equals(other: Any?): Boolean {
+    override fun equals(other: Any?): Boolean = TODO()
+    /*{
         if (this === other) return true
         if (other !is Polynom) return false
         if (this.degree() != other.degree()) return false
@@ -153,6 +154,7 @@ class Polynom(vararg coeffs: Double) {
         }
         return true
     }
+    */
 
     /**
      * Получение хеш-кода
