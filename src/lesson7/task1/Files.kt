@@ -434,7 +434,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     }
 
     for (line in File(inputName).readLines()) {
-        if (line.isEmpty() || (line.matches(Regex("[\t ]")))) {
+        if (line.isEmpty() || (line.matches(Regex("[\t ]"))) || (line.matches(Regex(" *(\\\\t)* *")))) {
             if (!prevWasEmpty) {
                 writer.newLine()
                 writer.write("</p>")
@@ -634,8 +634,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     val lhvLength = lhvString.length
 
     File(outputName).bufferedWriter().use {
-        it.write(" $lhv | $rhv")
-        it.newLine()
+
         var minuend: Int
         var digitNumber = 0
         if (rhv <= lhv) {
@@ -652,13 +651,23 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
 
         var subtrahend = (minuend / rhv) * rhv
         var remainder = minuend - subtrahend
-        it.write("-$subtrahend" + " ".repeat(lhvLength - subtrahend.toString().length + 3) + (lhv / rhv))
+        var ind = 0
+        if (subtrahend.toString().length == minuend.toString().length) {
+            ind = 1
+            it.write(" ")
+        }
+
+        it.write("$lhv | $rhv")
         it.newLine()
 
-        it.write("-".repeat(1 + subtrahend.toString().length))
+        val secondLine = " ".repeat(minuend.toString().length + ind - subtrahend.toString().length - 1) + "-$subtrahend"
+        it.write(secondLine + " ".repeat(lhvLength + ind - secondLine.length) + " ".repeat(3) + lhv / rhv)
         it.newLine()
 
-        var ind = 1 + (minuend.toString().length - remainder.toString().length)
+        it.write("-".repeat(secondLine.length))
+        it.newLine()
+
+        ind += (minuend.toString().length - remainder.toString().length)
         it.write(" ".repeat(ind) + remainder)
 
         while (digitNumber + 1 < lhvLength) {
