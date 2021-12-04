@@ -94,6 +94,7 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * А, например, 13-26 не является "правильным" отрезком.
      */
     fun isValid(): Boolean {
+        if (begin == end) return false
         if (begin.x != end.x && begin.y != end.y) {
             return (begin.x - end.x) * (begin.y - end.y) < 0 && abs(begin.x - end.x) == abs(begin.y - end.y)
         }
@@ -108,7 +109,7 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * для "неправильного" -- INCORRECT.
      */
     fun direction(): Direction {
-        if (!isValid()) {
+        if (!this.isValid()) {
             return Direction.INCORRECT
         }
         if (begin.x == end.x) {
@@ -154,7 +155,17 @@ enum class Direction {
      * Вернуть направление, противоположное данному.
      * Для INCORRECT вернуть INCORRECT
      */
-    fun opposite(): Direction = TODO()
+    fun opposite(): Direction {
+        return when (this) {
+            RIGHT -> LEFT
+            LEFT -> RIGHT
+            UP_RIGHT -> DOWN_LEFT
+            DOWN_LEFT -> UP_RIGHT
+            DOWN_RIGHT -> UP_LEFT
+            UP_LEFT -> DOWN_RIGHT
+            else -> INCORRECT
+        }
+    }
 
     /**
      * Средняя (3 балла)
@@ -174,7 +185,12 @@ enum class Direction {
      * Вернуть true, если данное направление совпадает с other или противоположно ему.
      * INCORRECT не параллельно никакому направлению, в том числе другому INCORRECT.
      */
-    fun isParallel(other: Direction): Boolean = TODO()
+    fun isParallel(other: Direction): Boolean {
+        if (this in setOf(RIGHT, LEFT) && other in setOf(RIGHT, LEFT)) return true
+        if (this in setOf(UP_RIGHT, DOWN_LEFT) && other in setOf(UP_RIGHT, DOWN_LEFT)) return true
+        if (this in setOf(DOWN_RIGHT, UP_LEFT) && other in setOf(DOWN_RIGHT, UP_LEFT)) return true
+        return false
+    }
 }
 
 /**
