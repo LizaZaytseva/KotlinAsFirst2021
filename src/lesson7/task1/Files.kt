@@ -630,6 +630,56 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    val lhvString = lhv.toString()
+    val lhvLength = lhvString.length
+
+    File(outputName).bufferedWriter().use {
+        it.write(" $lhv | $rhv")
+        it.newLine()
+        var minuend: Int
+        var digitNumber = 0
+        if (rhv <= lhv) {
+            minuend = lhvString[digitNumber].toString().toInt()
+            while (minuend < rhv) {
+                digitNumber += 1
+                minuend = (minuend.toString() + lhvString[digitNumber]).toInt()
+            }
+        } else {
+            minuend = lhv
+            digitNumber = lhvLength - 1
+        }
+
+
+        var subtrahend = (minuend / rhv) * rhv
+        var remainder = minuend - subtrahend
+        it.write("-$subtrahend" + " ".repeat(lhvLength - subtrahend.toString().length + 3) + (lhv / rhv))
+        it.newLine()
+
+        it.write("-".repeat(1 + subtrahend.toString().length))
+        it.newLine()
+
+        var ind = 1 + (minuend.toString().length - remainder.toString().length)
+        it.write(" ".repeat(ind) + remainder)
+
+        while (digitNumber + 1 < lhvLength) {
+            digitNumber += 1
+            val remainderString = remainder.toString() + lhvString[digitNumber]
+            it.write(lhvString[digitNumber].toString())
+            it.newLine()
+
+            minuend = remainder * 10 + lhvString[digitNumber].toString().toInt()
+            subtrahend = (minuend / rhv) * rhv
+            remainder = minuend - subtrahend
+            it.write(" ".repeat(ind - 1 + (remainderString.length - subtrahend.toString().length)) + "-" + subtrahend)
+            it.newLine()
+            it.write(" ".repeat(ind - 1 + (remainderString.length - subtrahend.toString().length)) + "-".repeat(subtrahend.toString().length + 1))
+            it.newLine()
+            ind += remainderString.length - remainder.toString().length
+            it.write(" ".repeat(ind) + remainder)
+
+
+        }
+        it.close()
+    }
 }
 
