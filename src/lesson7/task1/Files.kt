@@ -437,7 +437,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     for (line in File(inputName).readLines()) {
 
         if (line.isEmpty() || line.isBlank()) {
-            if (line.isBlank()) {
+            if (line.isNotEmpty()) {
                 blankNumber += 1
             }
             emptyOrBlankNumber += 1
