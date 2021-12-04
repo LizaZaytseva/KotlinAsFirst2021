@@ -38,12 +38,7 @@ data class HexPoint(val x: Int, val y: Int) {
      * Расстояние вычисляется как число единичных отрезков в пути между двумя гексами.
      * Например, путь межу гексами 16 и 41 (см. выше) может проходить через 25, 34, 43 и 42 и имеет длину 5.
      */
-    fun distance(other: HexPoint): Int {
-        val xDiff = abs(this.x - other.x)
-        val yDiff = abs(this.y - other.y)
-        val common = minOf(xDiff, yDiff)
-        return common + maxOf(xDiff, yDiff) - common
-    }
+    fun distance(other: HexPoint): Int = maxOf(this.x - other.x, this.y - other.y)
 
     override fun toString(): String = "$y.$x"
 }
