@@ -40,7 +40,7 @@ data class HexPoint(val x: Int, val y: Int) {
      */
     fun distance(other: HexPoint): Int {
         var result = maxOf(abs(this.x - other.x), abs(this.y - other.y))
-        if ((this.x < other.x && this.y < other.y) || (this.x > other.x && this.y > other.y)) {
+        if ((x - other.x) * (y - other.y) > 0) {
             result += minOf(abs(this.x - other.x), abs(this.y - other.y))
         }
         return result
@@ -74,7 +74,7 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      *
      * Вернуть true, если заданная точка находится внутри или на границе шестиугольника
      */
-    fun contains(point: HexPoint): Boolean = TODO()
+    fun contains(point: HexPoint): Boolean = abs(center.x - point.y) < 2 && abs(center.y - point.y) < 2
 }
 
 /**
