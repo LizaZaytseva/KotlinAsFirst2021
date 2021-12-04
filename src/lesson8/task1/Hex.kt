@@ -93,7 +93,12 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * Такими являются, например, отрезок 30-34 (горизонталь), 13-63 (прямая диагональ) или 51-24 (косая диагональ).
      * А, например, 13-26 не является "правильным" отрезком.
      */
-    fun isValid(): Boolean = TODO()
+    fun isValid(): Boolean {
+        if (begin.x != end.x && begin.y != end.y) {
+            return (begin.x - end.x) * (begin.y - end.y) < 0 && abs(begin.x - end.x) == abs(begin.y - end.y)
+        }
+        return true
+    }
 
     /**
      * Средняя (3 балла)
@@ -102,7 +107,25 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      * Для "правильного" отрезка выбирается одно из первых шести направлений,
      * для "неправильного" -- INCORRECT.
      */
-    fun direction(): Direction = TODO()
+    fun direction(): Direction {
+        if (!isValid()) {
+            return Direction.INCORRECT
+        }
+        if (begin.x == end.x) {
+            return when {
+                begin.y < end.y -> Direction.UP_RIGHT
+                else -> Direction.DOWN_LEFT
+            }
+        }
+        if (begin.y == end.y) {
+            return when {
+                begin.x < end.x -> Direction.RIGHT
+                else -> Direction.LEFT
+            }
+        }
+        if (begin.x > end.x && begin.y < end.y) return Direction.UP_LEFT
+        return Direction.DOWN_RIGHT
+    }
 
     override fun equals(other: Any?) =
         other is HexSegment && (begin == other.begin && end == other.end || end == other.begin && begin == other.end)
