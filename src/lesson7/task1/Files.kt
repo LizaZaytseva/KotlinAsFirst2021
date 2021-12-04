@@ -438,7 +438,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 
         if (line.isEmpty() || line.isBlank()) {
             emptyOrBlankNumber += 1
-            if (line.isNotEmpty()) {
+            if (line.matches(Regex(".* +.*"))) {
                 blankNumber += 1
             }
             if (blankNumber > 1 && emptyOrBlankNumber > 2) {
