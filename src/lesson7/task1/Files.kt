@@ -432,7 +432,6 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         ((File(inputName).readLines().size == 1) && (File(inputName).readLines()[0].isEmpty()))) {
         writer.write("<p></p>")
     }
-    var emptyOrBlankNumber = 0
     var blankNumber = 0
     for (line in File(inputName).readLines()) {
 
@@ -440,10 +439,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             if (line.isNotEmpty()) {
                 blankNumber += 1
             }
-            emptyOrBlankNumber += 1
-            if (emptyOrBlankNumber == 3 && blankNumber > 0) {
+            if (blankNumber > 1) {
                 writer.write("<p></p>")
-                emptyOrBlankNumber = 0
                 blankNumber = 0
             }
             if (!prevWasEmpty) {
@@ -453,7 +450,6 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             }
 
         } else {
-            emptyOrBlankNumber = 0
             blankNumber = 0
             if (prevWasEmpty) {
                 writer.newLine()
