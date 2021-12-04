@@ -67,16 +67,20 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * и другим шестиугольником B с центром в 26 и радиуоом 2 равно 2
      * (расстояние между точками 32 и 24)
      */
-    fun distance(other: Hexagon): Int = TODO()
+    fun distance(other: Hexagon): Int {
+        if (this.center.distance(other.center) <= this.radius + other.radius) {
+            return 0
+        }
+        return this.center.distance(other.center) - radius - other.radius
+    }
 
     /**
      * Тривиальная (1 балл)
      *
      * Вернуть true, если заданная точка находится внутри или на границе шестиугольника
      */
-    fun contains(point: HexPoint): Boolean = abs(center.x - point.y) < 2 && abs(center.y - point.y) < 2
+    fun contains(point: HexPoint): Boolean = center.distance(point) <= radius
 }
-
 /**
  * Прямолинейный отрезок между двумя гексами
  */
