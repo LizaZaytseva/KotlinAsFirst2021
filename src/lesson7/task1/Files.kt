@@ -681,7 +681,11 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             remainder = minuend - subtrahend
             it.write(" ".repeat(ind - 1 + (remainderString.length - subtrahend.toString().length)) + "-" + subtrahend)
             it.newLine()
-            it.write(" ".repeat(ind - 1 + (remainderString.length - subtrahend.toString().length)) + "-".repeat(subtrahend.toString().length + 1))
+            if (remainderString.length > subtrahend.toString().length) {
+                it.write(" ".repeat(ind) + "-".repeat(remainderString.length))
+            } else {
+                it.write(" ".repeat(ind - 1) + "-".repeat(subtrahend.toString().length + 1))
+            }
             it.newLine()
             ind += remainderString.length - remainder.toString().length
             it.write(" ".repeat(ind) + remainder)
