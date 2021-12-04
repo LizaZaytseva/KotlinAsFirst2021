@@ -177,7 +177,15 @@ enum class Direction {
      * Для направления INCORRECT бросить исключение IllegalArgumentException.
      * При решении этой задачи попробуйте обойтись без перечисления всех семи вариантов.
      */
-    fun next(): Direction = TODO()
+    fun next(): Direction {
+        if (this == INCORRECT) throw IllegalArgumentException("Incorrect direction")
+        return when (this) {
+            RIGHT -> UP_RIGHT
+            UP_RIGHT -> UP_LEFT
+            UP_LEFT -> LEFT
+            else -> this.opposite().next().opposite()
+        }
+    }
 
     /**
      * Простая (2 балла)
