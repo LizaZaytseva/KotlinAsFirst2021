@@ -214,7 +214,15 @@ enum class Direction {
  * 35, direction = UP_LEFT, distance = 2 --> 53
  * 45, direction = DOWN_LEFT, distance = 4 --> 05
  */
-fun HexPoint.move(direction: Direction, distance: Int): HexPoint = TODO()
+fun HexPoint.move(direction: Direction, distance: Int): HexPoint {
+    if (direction == Direction.INCORRECT) throw IllegalArgumentException("Incorrect direction")
+    return when (direction) {
+        Direction.RIGHT -> HexPoint(this.x + distance, this.y)
+        Direction.UP_RIGHT -> HexPoint(this.x, this.y + distance)
+        Direction.UP_LEFT -> HexPoint(this.x - distance, this.y + distance)
+        else -> this.move(direction.opposite(), -distance)
+    }
+}
 
 /**
  * Сложная (5 баллов)
@@ -252,6 +260,27 @@ fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
  * Если все три точки совпадают, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  */
 fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? = TODO()
+ /* {
+    if (a == b && b == c) {
+        return Hexagon(a, 0)
+    }
+    var numberOfSegments = 0
+    val abSegment = HexSegment(a, b)
+    val bcSegment = HexSegment(b, c)
+    val acSegment = HexSegment(a, c)
+    if (abSegment.isValid()) numberOfSegments++
+    if (bcSegment.isValid()) numberOfSegments++
+    if (acSegment.isValid()) numberOfSegments++
+    if (numberOfSegments == 3) {
+        if (abSegment.direction().isParallel(bcSegment.direction()) && acSegment.direction()
+                .isParallel(bcSegment.direction())) {
+
+        }
+    }
+    return
+}
+
+  */
 
 /**
  * Очень сложная (20 баллов)
