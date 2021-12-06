@@ -86,10 +86,11 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
     fun getPerimeterPoints(): Set<HexPoint> {
         if (radius == 0) return mutableSetOf(center)
         val result = mutableSetOf<HexPoint>()
-        var direction = Direction.UP_RIGHT
-        for (i in 0 until 6) {
-            result.addAll(HexSegment(center.move(direction, radius), center.move(direction.next(), radius)).getPoints())
-            direction = direction.next()
+        var segment = HexSegment(center.move(Direction.UP_RIGHT, radius), center.move(Direction.UP_LEFT, radius))
+        result.addAll(segment.getPoints())
+        for (i in 0 until 5) {
+            segment = HexSegment(segment.end, segment.end.move(segment.direction().next(), radius))
+            result.addAll(segment.getPoints())
         }
         return result
     }
@@ -144,8 +145,10 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
     fun length(): Int = begin.distance(end)
     fun getPoints(): Set<HexPoint> {
         val result = mutableSetOf(begin, end)
+        var currentPoint = begin.move(direction(), 1)
         for (i in 1 until length()) {
-            result.add(begin.move(direction(), i))
+            result.add(currentPoint)
+            currentPoint = currentPoint.move(direction(), 1)
         }
         return result
     }
