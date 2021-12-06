@@ -3,6 +3,7 @@
 package lesson8.task1
 
 import kotlin.math.abs
+import kotlin.math.min
 
 /**
  * Точка (гекс) на шестиугольной сетке.
@@ -49,6 +50,7 @@ data class HexPoint(val x: Int, val y: Int) {
     override fun toString(): String = "$y.$x"
 }
 
+
 /**
  * Правильный шестиугольник на гексагональной сетке.
  * Как окружность на плоскости, задаётся центральным гексом и радиусом.
@@ -68,10 +70,10 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * (расстояние между точками 32 и 24)
      */
     fun distance(other: Hexagon): Int {
-        if (this.center.distance(other.center) <= this.radius + other.radius) {
+        if (center.distance(other.center) <= radius + other.radius) {
             return 0
         }
-        return this.center.distance(other.center) - radius - other.radius
+        return center.distance(other.center) - radius - other.radius
     }
 
     /**
@@ -80,6 +82,17 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * Вернуть true, если заданная точка находится внутри или на границе шестиугольника
      */
     fun contains(point: HexPoint): Boolean = center.distance(point) <= radius
+
+    fun getPerimeterPoints(): Set<HexPoint> {
+        if (radius == 0) return mutableSetOf(center)
+        val result = mutableSetOf<HexPoint>()
+        var direction = Direction.UP_RIGHT
+        for (i in 0 until 6) {
+            result.addAll(HexSegment(center.move(direction, radius), center.move(direction.next(), radius)).getPoints())
+            direction = direction.next()
+        }
+        return result
+    }
 }
 /**
  * Прямолинейный отрезок между двумя гексами
@@ -127,6 +140,18 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
         if (begin.x > end.x && begin.y < end.y) return Direction.UP_LEFT
         return Direction.DOWN_RIGHT
     }
+
+    fun length(): Int = begin.distance(end)
+    fun getPoints(): Set<HexPoint> {
+        val result = mutableSetOf(begin, end)
+        for (i in 1 until length()) {
+            result.add(begin.move(direction(), i))
+        }
+        return result
+    }
+
+    fun isParallel(other: HexSegment): Boolean = this.direction().isParallel(other.direction())
+    fun isParallel(direction: Direction): Boolean = this.direction().isParallel(direction)
 
     override fun equals(other: Any?) =
         other is HexSegment && (begin == other.begin && end == other.end || end == other.begin && begin == other.end)
@@ -259,8 +284,68 @@ fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
  *
  * Если все три точки совпадают, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  */
-fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? = TODO()
- /* {
+
+fun hexagonByThreeConsPoints(ab: HexSegment, bc: HexSegment, ac: HexSegment): Hexagon {
+    val maxSegment = if (ab.length() > bc.length()) {
+        if (ab.length() > ac.length()) {
+            ab
+        } else {
+            ac
+        }
+    } else {
+        if (bc.length() > ac.length()) {
+            bc
+        } else {
+            ac
+        }
+    }
+    val radius = maxSegment.length()
+    return Hexagon(maxSegment.end.move(maxSegment.direction().next().next(), radius), radius)
+}
+
+fun getAllowedDirections(point: HexPoint, other1: HexPoint, other2: HexPoint): Set<Direction>? {
+    val optimalDirections = setOf<Direction>(Direction.DOWN_RIGHT, Direction.DOWN_LEFT, Direction.UP_RIGHT, Direction.UP_LEFT)
+    val result = mutableSetOf(Direction.DOWN_RIGHT, Direction.DOWN_LEFT, Direction.UP_RIGHT, Direction.UP_LEFT,
+        Direction.RIGHT, Direction.LEFT)
+
+    var resultDirection: Direction
+
+    if (point.x > maxOf(other1.x, other2.x)) {
+        result.removeAll(setOf(Direction.DOWN_RIGHT, Direction.RIGHT, Direction.UP_RIGHT))
+    } else if (point.x < minOf(other1.x, other2.x)) {
+        result.removeAll(setOf(Direction.DOWN_LEFT, Direction.LEFT, Direction.UP_LEFT))
+    } else {
+        if (abs(point.x - maxOf(other1.x, other2.x)) > abs(point.x - minOf(other1.x, other2.x))) {
+            result.removeAll(setOf(Direction.DOWN_LEFT, Direction.LEFT, Direction.UP_LEFT))
+        } else if (abs(point.x - maxOf(other1.x, other2.x)) < abs(point.x - minOf(other1.x, other2.x))){
+            result.removeAll(setOf(Direction.DOWN_RIGHT, Direction.RIGHT, Direction.UP_RIGHT))
+        } else {
+            return null
+        }
+    }
+
+    if (point.y > other1.y && point.y > other2.y) {
+        result.removeAll(setOf(Direction.UP_LEFT, Direction.UP_RIGHT))
+    } else if (point.y < other1.y && point.y < other2.y) {
+        result.removeAll(setOf(Direction.DOWN_LEFT, Direction.DOWN_RIGHT))
+    } else {
+        if (abs(point.y - maxOf(other1.y, other2.y)) > abs(point.y - minOf(other1.y, other2.y))) {
+            result.removeAll(setOf(Direction.DOWN_LEFT, Direction.DOWN_RIGHT))
+        } else if (abs(point.y - maxOf(other1.y, other2.y)) < abs(point.y - minOf(other1.y, other2.y))) {
+            result.removeAll(setOf(Direction.UP_LEFT, Direction.UP_RIGHT))
+        } else {
+            return null
+        }
+    }
+
+    if (result.intersect(optimalDirections).isNotEmpty()) {
+        resultDirection = result.intersect(optimalDirections).toList()[0]
+    }
+
+    return result
+}
+
+fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     if (a == b && b == c) {
         return Hexagon(a, 0)
     }
@@ -272,15 +357,30 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? = TODO
     if (bcSegment.isValid()) numberOfSegments++
     if (acSegment.isValid()) numberOfSegments++
     if (numberOfSegments == 3) {
-        if (abSegment.direction().isParallel(bcSegment.direction()) && acSegment.direction()
-                .isParallel(bcSegment.direction())) {
-
+        if (abSegment.isParallel(bcSegment) && acSegment.isParallel(bcSegment)) {
+            return hexagonByThreeConsPoints(abSegment, bcSegment, acSegment)
         }
     }
-    return
+    val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
+    for (i in 0 until maxDistance * 3) {
+        val aHexagon = Hexagon(a, i)
+        val bHexagon = Hexagon(b, i)
+        val cHexagon = Hexagon(c, i)
+
+        val aPoints = aHexagon.getPerimeterPoints()
+        val bPoints = bHexagon.getPerimeterPoints()
+        val cPoints = cHexagon.getPerimeterPoints()
+
+        val intersection = aPoints.intersect(bPoints).intersect(cPoints)
+
+        if (intersection.isNotEmpty()) {
+            return Hexagon(intersection.toList()[0], i)
+        }
+    }
+    return null
 }
 
-  */
+
 
 /**
  * Очень сложная (20 баллов)
