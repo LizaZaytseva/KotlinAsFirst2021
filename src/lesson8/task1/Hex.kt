@@ -306,27 +306,6 @@ fun hexagonByThreeConsPoints(ab: HexSegment, bc: HexSegment, ac: HexSegment): He
     return Hexagon(maxSegment.end.move(maxSegment.direction().next().next(), radius), radius)
 }
 
-fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
-    val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
-    for (i in maxDistance / 2 until maxDistance) {
-        val aHexagon = Hexagon(a, i)
-        val bHexagon = Hexagon(b, i)
-        val cHexagon = Hexagon(c, i)
-
-        val aPoints = aHexagon.getPerimeterPoints()
-        val bPoints = bHexagon.getPerimeterPoints()
-        val cPoints = cHexagon.getPerimeterPoints()
-
-        val intersection = aPoints.intersect(bPoints).intersect(cPoints)
-
-        if (intersection.isNotEmpty()) {
-            return Hexagon(intersection.toList()[0], i)
-        }
-    }
-
-    return null
-}
-
 
 fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     if (a == b && b == c) {
@@ -346,6 +325,56 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     }
 
     return hexagonByThreeNonConsPoints(a, b, c)
+}
+
+fun checkIntersect(intersect: Set<HexPoint>, i: Int): Boolean {
+    val intersectList = intersect.toList()
+    if (intersectList[0].distance(intersectList[1]) > i) {
+        return true
+    }
+    return false
+}
+
+fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
+    val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
+    var i = maxDistance / 2
+    while (true) {
+        val aHexagon = Hexagon(a, i)
+        val bHexagon = Hexagon(b, i)
+        val cHexagon = Hexagon(c, i)
+
+        val aPoints = aHexagon.getPerimeterPoints()
+        val bPoints = bHexagon.getPerimeterPoints()
+        val cPoints = cHexagon.getPerimeterPoints()
+
+        val ab = aPoints.intersect(bPoints)
+        val bc = bPoints.intersect(cPoints)
+        val ca = cPoints.intersect(aPoints)
+
+        if (ab.isNotEmpty() && ab.size == bc.size && bc.size == ca.size) {
+            val intersection = aPoints.intersect(bPoints).intersect(cPoints)
+            if (intersection.isNotEmpty()) {
+                return Hexagon(intersection.toList()[0], i)
+            }
+            if (ab.size == 2) {
+                if (checkIntersect(ab, i)) {
+                    return null
+                }
+            }
+            if (bc.size == 2) {
+                if (checkIntersect(bc, i)) {
+                    return null
+                }
+            }
+            if (ca.size == 2) {
+                if (checkIntersect(ca, i)) {
+                    return null
+                }
+            }
+        }
+
+        i++
+    }
 }
 
 
