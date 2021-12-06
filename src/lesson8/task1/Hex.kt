@@ -324,7 +324,7 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     }
 
     val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
-    for (i in maxDistance / 2 until maxDistance * 2) {
+    for (i in maxDistance / 2 until maxDistance) {
         val aHexagon = Hexagon(a, i)
         val bHexagon = Hexagon(b, i)
         val cHexagon = Hexagon(c, i)
