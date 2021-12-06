@@ -306,48 +306,6 @@ fun hexagonByThreeConsPoints(ab: HexSegment, bc: HexSegment, ac: HexSegment): He
     return Hexagon(maxSegment.end.move(maxSegment.direction().next().next(), radius), radius)
 }
 
-fun getAllowedDirections(point: HexPoint, other1: HexPoint, other2: HexPoint): Set<Direction>? {
-    val optimalDirections = setOf<Direction>(Direction.DOWN_RIGHT, Direction.DOWN_LEFT, Direction.UP_RIGHT, Direction.UP_LEFT)
-    val result = mutableSetOf(Direction.DOWN_RIGHT, Direction.DOWN_LEFT, Direction.UP_RIGHT, Direction.UP_LEFT,
-        Direction.RIGHT, Direction.LEFT)
-
-    var resultDirection: Direction
-
-    if (point.x > maxOf(other1.x, other2.x)) {
-        result.removeAll(setOf(Direction.DOWN_RIGHT, Direction.RIGHT, Direction.UP_RIGHT))
-    } else if (point.x < minOf(other1.x, other2.x)) {
-        result.removeAll(setOf(Direction.DOWN_LEFT, Direction.LEFT, Direction.UP_LEFT))
-    } else {
-        if (abs(point.x - maxOf(other1.x, other2.x)) > abs(point.x - minOf(other1.x, other2.x))) {
-            result.removeAll(setOf(Direction.DOWN_LEFT, Direction.LEFT, Direction.UP_LEFT))
-        } else if (abs(point.x - maxOf(other1.x, other2.x)) < abs(point.x - minOf(other1.x, other2.x))){
-            result.removeAll(setOf(Direction.DOWN_RIGHT, Direction.RIGHT, Direction.UP_RIGHT))
-        } else {
-            return null
-        }
-    }
-
-    if (point.y > other1.y && point.y > other2.y) {
-        result.removeAll(setOf(Direction.UP_LEFT, Direction.UP_RIGHT))
-    } else if (point.y < other1.y && point.y < other2.y) {
-        result.removeAll(setOf(Direction.DOWN_LEFT, Direction.DOWN_RIGHT))
-    } else {
-        if (abs(point.y - maxOf(other1.y, other2.y)) > abs(point.y - minOf(other1.y, other2.y))) {
-            result.removeAll(setOf(Direction.DOWN_LEFT, Direction.DOWN_RIGHT))
-        } else if (abs(point.y - maxOf(other1.y, other2.y)) < abs(point.y - minOf(other1.y, other2.y))) {
-            result.removeAll(setOf(Direction.UP_LEFT, Direction.UP_RIGHT))
-        } else {
-            return null
-        }
-    }
-
-    if (result.intersect(optimalDirections).isNotEmpty()) {
-        resultDirection = result.intersect(optimalDirections).toList()[0]
-    }
-
-    return result
-}
-
 fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     if (a == b && b == c) {
         return Hexagon(a, 0)
@@ -365,7 +323,7 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
         }
     }
     val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
-    for (i in 1 until maxDistance * 2) {
+    for (i in maxDistance / 2 until maxDistance * 2) {
         val aHexagon = Hexagon(a, i)
         val bHexagon = Hexagon(b, i)
         val cHexagon = Hexagon(c, i)
