@@ -329,7 +329,8 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
 
 fun checkIntersect(intersect: Set<HexPoint>, i: Int): Boolean {
     val intersectList = intersect.toList()
-    if (intersectList[0].distance(intersectList[1]) > i + 1) {
+    val distance = intersectList[0].distance(intersectList[1])
+    if (distance > i + 1) {
         return true
     }
     return false
@@ -352,27 +353,31 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
         val ca = cPoints.intersect(aPoints)
 
         var sum = 0
+        var checkSum = 0
 
-        if (ab.size == 2) {
+        if (ab.size > 1) {
             if (checkIntersect(ab, i)) {
-                return null
+                checkSum++
             }
             sum++
         }
-        if (bc.size == 2) {
+        if (bc.size > 1) {
             if (checkIntersect(bc, i)) {
-                return null
+                checkSum++
             }
             sum++
         }
-        if (ca.size == 2) {
+        if (ca.size > 1) {
             if (checkIntersect(ca, i)) {
-                return null
+                checkSum++
             }
             sum++
         }
 
         if (sum == 3) {
+            if (checkSum == 3) {
+                return null
+            }
             val intersection = aPoints.intersect(bPoints).intersect(cPoints)
             if (intersection.isNotEmpty()) {
                 return Hexagon(intersection.toList()[0], i)
