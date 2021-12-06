@@ -308,8 +308,7 @@ fun hexagonByThreeConsPoints(ab: HexSegment, bc: HexSegment, ac: HexSegment): He
 
 fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
-    var i = maxDistance / 2
-    while (true) {
+    for (i in maxDistance / 2 until maxDistance) {
         val aHexagon = Hexagon(a, i)
         val bHexagon = Hexagon(b, i)
         val cHexagon = Hexagon(c, i)
@@ -318,22 +317,14 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
         val bPoints = bHexagon.getPerimeterPoints()
         val cPoints = cHexagon.getPerimeterPoints()
 
-        val ab = aPoints.intersect(bPoints).size
-        val bc = bPoints.intersect(cPoints).size
-        val ca = cPoints.intersect(aPoints).size
+        val intersection = aPoints.intersect(bPoints).intersect(cPoints)
 
-
-
-        if (ab > 0 && ab == bc && bc == ca ) {
-            val intersection = aPoints.intersect(bPoints).intersect(cPoints)
-            if (intersection.isNotEmpty()) {
-                return Hexagon(intersection.toList()[0], i)
-            }
-            return null
+        if (intersection.isNotEmpty()) {
+            return Hexagon(intersection.toList()[0], i)
         }
-
-        i++
     }
+
+    return null
 }
 
 
