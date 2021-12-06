@@ -324,7 +324,7 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
 
 
 
-        if (ab == bc && bc == ca) {
+        if (ab == bc && bc == ca && ab > 0) {
             val intersection = aPoints.intersect(bPoints).intersect(cPoints)
             if (intersection.isNotEmpty()) {
                 return Hexagon(intersection.toList()[0], i)
