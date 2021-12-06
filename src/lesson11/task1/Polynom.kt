@@ -25,6 +25,7 @@ class Polynom(vararg coeffs: Double) {
 
 
     private val coeffs = coeffs
+
     /**
      * Геттер: вернуть значение коэффициента при x^i
      */
@@ -60,23 +61,29 @@ class Polynom(vararg coeffs: Double) {
     /**
      * Сложение
      */
-    operator fun plus(other: Polynom): Polynom {
-        val newDegree = maxOf(this.degree(), other.degree())
-        val thisDifference = newDegree - this.degree()
-        val otherDifference = newDegree - other.degree()
+
+    fun plusMinus(other: Polynom, type: Int): Polynom {
+        val thisDegree = this.degree()
+        val otherDegree = other.degree()
+
+        val newDegree = maxOf(thisDegree, otherDegree)
+        val thisDifference = newDegree - thisDegree
+        val otherDifference = newDegree - otherDegree
         val newCoeffs = DoubleArray(newDegree + 1)
         for (i in 0..newDegree) {
             var currentCoeff = 0.0
             if (i - thisDifference >= 0) {
-                currentCoeff += this.coeff(this.degree() - (i - thisDifference))
+                currentCoeff += this.coeff(thisDegree - (i - thisDifference))
             }
             if (i - otherDifference >= 0) {
-                currentCoeff += other.coeff(other.degree() - (i - otherDifference))
+                currentCoeff += type * other.coeff(otherDegree - (i - otherDifference))
             }
             newCoeffs[i] = currentCoeff
         }
         return Polynom(*newCoeffs)
     }
+
+    operator fun plus(other: Polynom): Polynom = plusMinus(other, 1)
 
     /**
      * Смена знака (при всех слагаемых)
@@ -92,23 +99,7 @@ class Polynom(vararg coeffs: Double) {
     /**
      * Вычитание
      */
-    operator fun minus(other: Polynom): Polynom {
-        val newDegree = maxOf(this.degree(), other.degree())
-        val thisDifference = newDegree - this.degree()
-        val otherDifference = newDegree - other.degree()
-        val newCoeffs = DoubleArray(newDegree + 1)
-        for (i in 0..newDegree) {
-            var currentCoeff = 0.0
-            if (i - thisDifference >= 0) {
-                currentCoeff += this.coeff(this.degree() - (i - thisDifference))
-            }
-            if (i - otherDifference >= 0) {
-                currentCoeff -= other.coeff(other.degree() - (i - otherDifference))
-            }
-            newCoeffs[i] = currentCoeff
-        }
-        return Polynom(*newCoeffs)
-    }
+    operator fun minus(other: Polynom): Polynom = plusMinus(other, -1)
 
     /**
      * Умножение
