@@ -324,25 +324,22 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     }
 
     val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
-    try {
-        for (i in maxDistance / 2 until maxDistance * 2) {
-            val aHexagon = Hexagon(a, i)
-            val bHexagon = Hexagon(b, i)
-            val cHexagon = Hexagon(c, i)
+    for (i in maxDistance / 2 until maxDistance * 2) {
+        val aHexagon = Hexagon(a, i)
+        val bHexagon = Hexagon(b, i)
+        val cHexagon = Hexagon(c, i)
 
-            val aPoints = aHexagon.getPerimeterPoints()
-            val bPoints = bHexagon.getPerimeterPoints()
-            val cPoints = cHexagon.getPerimeterPoints()
+        val aPoints = aHexagon.getPerimeterPoints()
+        val bPoints = bHexagon.getPerimeterPoints()
+        val cPoints = cHexagon.getPerimeterPoints()
 
-            val intersection = aPoints.intersect(bPoints).intersect(cPoints)
+        val intersection = aPoints.intersect(bPoints).intersect(cPoints)
 
-            if (intersection.isNotEmpty()) {
-                return Hexagon(intersection.toList()[0], i)
-            }
+        if (intersection.isNotEmpty()) {
+            return Hexagon(intersection.toList()[0], i)
         }
-    } catch (e: java.util.concurrent.TimeoutException) {
-        return null
     }
+
     return null
 }
 
