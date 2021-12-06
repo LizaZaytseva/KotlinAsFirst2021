@@ -330,7 +330,7 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
 fun checkIntersect(intersect: Set<HexPoint>, i: Int): Boolean {
     val intersectList = intersect.toList()
     val distance = intersectList[0].distance(intersectList[1])
-    if (distance > i + 1) {
+    if (distance > i + 50) {
         return true
     }
     return false
