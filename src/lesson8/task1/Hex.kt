@@ -2,6 +2,7 @@
 
 package lesson8.task1
 
+import ru.spbstu.wheels.NullableMonad.filter
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -411,12 +412,12 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
                 return Hexagon(intersection.toList()[0], i)
             }
 
-            val aDistance = bc.toList()[0].distance(a)
-            val bDistance = ca.toList()[0].distance(b)
-            val cDistance = ab.toList()[0].distance(c)
+            val aDistance = minDistance(a, bc)
+            val bDistance = minDistance(b, ca)
+            val cDistance = minDistance(c, ab)
 
 
-            if (aDistance < i && bDistance < i && cDistance < i) {
+            if (aDistance <= i && bDistance <= i && cDistance <= i) {
                 return null
             }
         }
@@ -425,6 +426,17 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
     return null
 }
 
+fun minDistance(point: HexPoint, set: Set<HexPoint>): Int {
+    val list = set.toList()
+    var result = point.distance(list[0])
+    for (otherPoint in list) {
+        val distance = point.distance(otherPoint)
+        if (distance < result) {
+            result = distance
+        }
+    }
+    return result
+}
 
 
 /**
