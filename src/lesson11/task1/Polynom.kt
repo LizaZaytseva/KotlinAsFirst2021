@@ -75,30 +75,6 @@ class Polynom(vararg coeffs: Double) {
      * Сложение
      */
 
-    /*
-    private fun plusMinus(other: Polynom, type: Int): Polynom {
-        val thisDegree = this.degree()
-        val otherDegree = other.degree()
-
-        val newDegree = maxOf(thisDegree, otherDegree)
-        val thisDifference = newDegree - thisDegree
-        val otherDifference = newDegree - otherDegree
-        val newCoeffs = DoubleArray(newDegree + 1)
-        for (i in 0..newDegree) {
-            var currentCoeff = 0.0
-            if (i - thisDifference >= 0) {
-                currentCoeff += this.coeff(thisDegree - (i - thisDifference))
-            }
-            if (i - otherDifference >= 0) {
-                currentCoeff += type * other.coeff(otherDegree - (i - otherDifference))
-            }
-            newCoeffs[i] = currentCoeff
-        }
-        return Polynom(*newCoeffs)
-    }
-
-     */
-
     private fun plusMinus(other: Polynom, type: Int): Polynom {
         val newDegree = maxOf(this.degree(), other.degree())
         val newCoeffs = DoubleArray(newDegree + 1)
@@ -150,7 +126,29 @@ class Polynom(vararg coeffs: Double) {
      *
      * Если A / B = C и A % B = D, то A = B * C + D и степень D меньше степени B
      */
-    operator fun div(other: Polynom): Polynom = TODO()
+    operator fun div(other: Polynom): Polynom {
+        val dividendCoeffs = coeffs
+        val otherDegree = other.degree()
+        val thisDegree = this.degree()
+        if (other.degree() > thisDegree) {
+            return Polynom(0.0)
+        }
+        val result = mutableListOf<Double>()
+        for (position in 0..(thisDegree - otherDegree)) {
+            val currentFraction = dividendCoeffs[position] / other.coeff(otherDegree)
+            result.add(currentFraction)
+
+            val currentSubtrahend = DoubleArray(otherDegree + 1)
+            for (i in currentSubtrahend.indices) {
+                currentSubtrahend[i] = other.coeffs[i] * currentFraction
+            }
+            for (i in 0..otherDegree) {
+                dividendCoeffs[i] -= currentSubtrahend[i]
+            }
+
+        }
+        return Polynom(*result.toDoubleArray())
+    }
 
     /**
      * Взятие остатка
