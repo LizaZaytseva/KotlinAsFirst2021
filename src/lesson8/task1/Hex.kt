@@ -85,13 +85,17 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
     fun contains(point: HexPoint): Boolean = center.distance(point) <= radius
 
     fun getPerimeterPoints(): Set<HexPoint> {
-        if (radius == 0) return mutableSetOf(center)
+        var currentPoint = center.move(Direction.UP_RIGHT, radius)
+        var direction = (Direction.LEFT)
         val result = mutableSetOf<HexPoint>()
-        var segment = HexSegment(center.move(Direction.UP_RIGHT, radius), center.move(Direction.UP_LEFT, radius))
-        result.addAll(segment.getPoints())
-        for (i in 0 until 5) {
-            segment = HexSegment(segment.end, segment.end.move(segment.direction().next(), radius))
-            result.addAll(segment.getPoints())
+
+        for (j in 0 until 6) {
+            for (k in 0 until radius) {
+                result.add(currentPoint)
+                currentPoint = currentPoint.move(direction, 1)
+            }
+
+            direction = direction.next()
         }
         return result
     }
@@ -299,7 +303,31 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     return hexagonByThreeNonConsPoints(a, b, c)
 }
 
+/*
+fun fastIntersectCheck(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): Hexagon? {
 
+    var currentPoint = a.move(Direction.UP_RIGHT, i)
+    var direction = (Direction.LEFT)
+    if (currentPoint in set && currentPoint.distance(b) == i) {
+        return Hexagon(currentPoint, i)
+    }
+
+
+    for (j in 0 until 6) {
+        for (k in 0 until i) {
+            currentPoint = currentPoint.move(direction, 1)
+            if (currentPoint in set && currentPoint.distance(b) == i) {
+                return Hexagon(currentPoint, i)
+            }
+        }
+
+        direction = direction.next()
+    }
+    return null
+
+}
+
+ */
 fun fastIntersectCheck(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): Hexagon? {
 
     var currentPoint = a.move(Direction.UP_RIGHT, i)
