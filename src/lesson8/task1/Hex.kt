@@ -144,6 +144,7 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
     }
 
     fun length(): Int = begin.distance(end)
+
     fun getPoints(): Set<HexPoint> {
         val result = mutableSetOf(begin, end)
         var currentPoint = begin.move(direction(), 1)
@@ -300,20 +301,19 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
 
 
 fun fastIntersectCheck(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): Hexagon? {
-    var segment = HexSegment(a.move(Direction.UP_RIGHT, i), a.move(Direction.UP_LEFT, i))
+
+    var currentPoint = a.move(Direction.UP_RIGHT, i)
+    var direction = (Direction.LEFT)
 
     for (j in 0 until 6) {
-        val result = segment.getPoints()
-        val intersect = result.intersect(set)
-        if (intersect.isNotEmpty()) {
-            for (point in intersect) {
-                if (b.distance(point) == i) {
-                    return Hexagon(point, i)
-                }
+        for (k in 0 until i) {
+            if (currentPoint in set && currentPoint.distance(b) == i) {
+                return Hexagon(currentPoint, i)
             }
+            currentPoint = currentPoint.move(direction, 1)
         }
 
-        segment = HexSegment(segment.end, segment.end.move(segment.direction().next(), i))
+        direction = direction.next()
     }
     return null
 
