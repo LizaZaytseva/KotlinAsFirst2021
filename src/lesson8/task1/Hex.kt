@@ -48,21 +48,6 @@ data class HexPoint(val x: Int, val y: Int) {
 
     override fun toString(): String = "$y.$x"
 
-    fun getHexagonPerimeterPoints(radius: Int): Set<HexPoint> {
-        var currentPoint = this.move(Direction.UP_RIGHT, radius)
-        var direction = (Direction.LEFT)
-        val result = mutableSetOf<HexPoint>()
-
-        for (j in 0 until 6) {
-            for (k in 0 until radius) {
-                result.add(currentPoint)
-                currentPoint = currentPoint.move(direction, 1)
-            }
-
-            direction = direction.next()
-        }
-        return result
-    }
 }
 
 
@@ -97,6 +82,22 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * Вернуть true, если заданная точка находится внутри или на границе шестиугольника
      */
     fun contains(point: HexPoint): Boolean = center.distance(point) <= radius
+
+    fun getPerimeterPoints(): Set<HexPoint> {
+        var currentPoint = center.move(Direction.UP_RIGHT, radius)
+        var direction = (Direction.LEFT)
+        val result = mutableSetOf<HexPoint>()
+
+        for (j in 0 until 6) {
+            for (k in 0 until radius) {
+                result.add(currentPoint)
+                currentPoint = currentPoint.move(direction, 1)
+            }
+
+            direction = direction.next()
+        }
+        return result
+    }
 
 
 }
@@ -300,10 +301,10 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     if (a == b && b == c) {
         return Hexagon(a, 0)
     }
-    return hexagonByThreeNonConsPoints(a, b, c)
+    return hexagonByThreeDifferentPoints(a, b, c)
 }
 
-fun fastIntersectCheck(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): Hexagon? {
+fun findHexagon(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): Hexagon? {
 
     var currentPoint = a.move(Direction.UP_RIGHT, i)
     var direction = (Direction.LEFT)
@@ -315,7 +316,6 @@ fun fastIntersectCheck(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): He
             }
             currentPoint = currentPoint.move(direction, 1)
         }
-
         direction = direction.next()
     }
     return null
@@ -323,15 +323,15 @@ fun fastIntersectCheck(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): He
 }
 
 
-fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
+fun hexagonByThreeDifferentPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
     val start = maxDistance / 2
     for (i in start..maxDistance) {
-        val aPoints = a.getHexagonPerimeterPoints(i)
+        val cPoints = Hexagon(c, i).getPerimeterPoints()
 
-        val intersect = fastIntersectCheck(b, c, aPoints, i)
-        if (intersect != null) {
-            return intersect
+        val result = findHexagon(a, b, cPoints, i)
+        if (result != null) {
+            return result
         }
     }
 
