@@ -19,7 +19,7 @@ package lesson12.task1
  */
 class PhoneBook {
     private val book = mutableMapOf<String, MutableSet<String>>()
-    private val allPhones = mutableSetOf<String>()
+    private val allPhones = mutableMapOf<String, String>()
 
     val getNumberOfPhones: Int get() = allPhones.size
 
@@ -46,7 +46,9 @@ class PhoneBook {
     fun removeHuman(name: String): Boolean {
         if (name in book.keys) {
             book.remove(name)
-            allPhones.removeAll(phones(name))
+            for (phone in phones(name)) {
+                allPhones.remove(phone)
+            }
             return true
         }
         return false
@@ -62,7 +64,7 @@ class PhoneBook {
     fun addPhone(name: String, phone: String): Boolean {
         if (phone !in allPhones && name in book.keys) {
             book[name]!!.add(phone)
-            allPhones.add(phone)
+            allPhones[phone] = name
             return true
         }
         return false
@@ -100,11 +102,7 @@ class PhoneBook {
      */
     fun humanByPhone(phone: String): String? {
         if (phone in allPhones) {
-            for ((key, value) in book) {
-                if (phone in value) {
-                    return key
-                }
-            }
+            return allPhones[phone]
         }
         return null
     }
