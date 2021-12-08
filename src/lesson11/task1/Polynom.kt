@@ -22,14 +22,34 @@ import kotlin.math.pow
  * Старшие коэффициенты, равные нулю, игнорировать, например Polynom(0.0, 0.0, 5.0, 3.0) соответствует 5x+3
  */
 class Polynom(vararg coeffs: Double) {
+    private val coeffs: DoubleArray
 
+    init {
+        var zeroes = 0
+        while (zeroes < coeffs.size && coeffs[zeroes] == 0.0) {
+            zeroes++
+        }
+        if (zeroes == coeffs.size) {
+            this.coeffs = DoubleArray(1) { 0.0 }
+        } else {
+            val result = DoubleArray(coeffs.size - zeroes)
+            for (i in zeroes until coeffs.size) {
+                result[i - zeroes] = coeffs[i]
+            }
+            this.coeffs = result
+        }
 
-    private val coeffs = coeffs
+    }
 
     /**
      * Геттер: вернуть значение коэффициента при x^i
      */
-    fun coeff(i: Int): Double = coeffs[coeffs.size - (1 + i)]
+    fun coeff(i: Int): Double {
+        if (i > degree()) {
+            return 0.0
+        }
+        return coeffs[coeffs.size - (1 + i)]
+    }
 
     /**
      * Расчёт значения при заданном x
@@ -49,20 +69,14 @@ class Polynom(vararg coeffs: Double) {
      * Слагаемые с нулевыми коэффициентами игнорировать, т.е.
      * степень 0x^2+0x+2 также равна 0.
      */
-    fun degree(): Int {
-        for (i in coeffs.indices) {
-            if (coeffs[i] != 0.0) {
-                return coeffs.size - (i + 1)
-            }
-        }
-        return 0
-    }
+    fun degree(): Int = coeffs.size - 1
 
     /**
      * Сложение
      */
 
-    fun plusMinus(other: Polynom, type: Int): Polynom {
+    /*
+    private fun plusMinus(other: Polynom, type: Int): Polynom {
         val thisDegree = this.degree()
         val otherDegree = other.degree()
 
@@ -81,6 +95,19 @@ class Polynom(vararg coeffs: Double) {
             newCoeffs[i] = currentCoeff
         }
         return Polynom(*newCoeffs)
+    }
+
+     */
+
+    private fun plusMinus(other: Polynom, type: Int): Polynom {
+        val newDegree = maxOf(this.degree(), other.degree())
+        val newCoeffs = DoubleArray(newDegree + 1)
+
+        for (i in 0..newDegree) {
+            newCoeffs[i] = this.coeff(i) + type * other.coeff(i)
+        }
+
+        return Polynom(*newCoeffs.reversed().toDoubleArray())
     }
 
     operator fun plus(other: Polynom): Polynom = plusMinus(other, 1)
@@ -133,22 +160,27 @@ class Polynom(vararg coeffs: Double) {
     /**
      * Сравнение на равенство
      */
-    override fun equals(other: Any?): Boolean = TODO()
-    /*{
+
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Polynom) return false
         if (this.degree() != other.degree()) return false
-        for (i in coeffs.indices) {
+        for (i in this.coeffs.indices) {
             if (this.coeff(i) != other.coeff(i)) {
                 return false
             }
         }
         return true
     }
-    */
 
     /**
      * Получение хеш-кода
      */
-    override fun hashCode(): Int = TODO()
+    override fun hashCode(): Int {
+        var result = 13
+        for (coeff in coeffs) {
+            result = (result * 31) + coeff.hashCode()
+        }
+        return result
+    }
 }
