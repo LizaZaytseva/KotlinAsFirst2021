@@ -2,9 +2,7 @@
 
 package lesson8.task1
 
-import ru.spbstu.wheels.NullableMonad.filter
 import kotlin.math.abs
-import kotlin.math.min
 
 /**
  * Точка (гекс) на шестиугольной сетке.
@@ -49,6 +47,22 @@ data class HexPoint(val x: Int, val y: Int) {
     }
 
     override fun toString(): String = "$y.$x"
+
+    fun getHexagonPerimeterPoints(radius: Int): Set<HexPoint> {
+        var currentPoint = this.move(Direction.UP_RIGHT, radius)
+        var direction = (Direction.LEFT)
+        val result = mutableSetOf<HexPoint>()
+
+        for (j in 0 until 6) {
+            for (k in 0 until radius) {
+                result.add(currentPoint)
+                currentPoint = currentPoint.move(direction, 1)
+            }
+
+            direction = direction.next()
+        }
+        return result
+    }
 }
 
 
@@ -279,28 +293,13 @@ fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
  *
  * Если все три точки совпадают, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  */
-fun getPerimeterPoints(center: HexPoint, radius: Int): Set<HexPoint> {
-    var currentPoint = center.move(Direction.UP_RIGHT, radius)
-    var direction = (Direction.LEFT)
-    val result = mutableSetOf<HexPoint>()
 
-    for (j in 0 until 6) {
-        for (k in 0 until radius) {
-            result.add(currentPoint)
-            currentPoint = currentPoint.move(direction, 1)
-        }
-
-        direction = direction.next()
-    }
-    return result
-}
 
 
 fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     if (a == b && b == c) {
         return Hexagon(a, 0)
     }
-
     return hexagonByThreeNonConsPoints(a, b, c)
 }
 
@@ -328,7 +327,7 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
     val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
     val start = maxDistance / 2
     for (i in start..maxDistance) {
-        val aPoints = getPerimeterPoints(a, i)
+        val aPoints = a.getHexagonPerimeterPoints(i)
 
         val intersect = fastIntersectCheck(b, c, aPoints, i)
         if (intersect != null) {
