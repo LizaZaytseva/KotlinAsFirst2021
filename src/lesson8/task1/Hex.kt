@@ -401,10 +401,18 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
         val bPoints = bHexagon.getPerimeterPoints()
         val cPoints = cHexagon.getPerimeterPoints()
 
-        val intersection = aPoints.intersect(bPoints).intersect(cPoints)
+        val ab = aPoints.intersect(bPoints)
+        val bc = bPoints.intersect(cPoints)
+        val ca = cPoints.intersect(aPoints)
 
-        if (intersection.isNotEmpty()) {
-            return Hexagon(intersection.toList()[0], i)
+        if (ab.isNotEmpty() && bc.isNotEmpty() && ca.isNotEmpty()) {
+            if (ab.toList()[0].distance(c) >= i && bc.toList()[0].distance(a) >= i && ca.toList()[0].distance(b) >= i) {
+                val intersection = ab.intersect(bc).intersect(ca)
+                if (intersection.isNotEmpty()) {
+                    return Hexagon(intersection.toList()[0], i)
+                }
+                return null
+            }
         }
     }
 
