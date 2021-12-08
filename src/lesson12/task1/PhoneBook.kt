@@ -30,7 +30,7 @@ class PhoneBook {
      * (во втором случае телефонная книга не должна меняться).
      */
     fun addHuman(name: String): Boolean {
-        if (name !in book.keys) {
+        if (name !in book) {
             book[name] = mutableSetOf()
             return true
         }
@@ -46,6 +46,7 @@ class PhoneBook {
     fun removeHuman(name: String): Boolean {
         if (name in book.keys) {
             book.remove(name)
+            allPhones.removeAll(phones(name))
             return true
         }
         return false
@@ -59,7 +60,7 @@ class PhoneBook {
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
     fun addPhone(name: String, phone: String): Boolean {
-        if ((phone !in allPhones) && (name in book.keys)) {
+        if (phone !in allPhones && name in book.keys) {
             book[name]!!.add(phone)
             allPhones.add(phone)
             return true
@@ -88,7 +89,7 @@ class PhoneBook {
      */
     fun phones(name: String): Set<String> {
         if (name in book.keys) {
-            return book[name]!!.toSet()
+            return book[name]!!
         }
         return setOf()
     }
@@ -99,7 +100,7 @@ class PhoneBook {
      */
     fun humanByPhone(phone: String): String? {
         if (phone in allPhones) {
-            for ((key, value) in book){
+            for ((key, value) in book) {
                 if (phone in value) {
                     return key
                 }
@@ -116,12 +117,8 @@ class PhoneBook {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is PhoneBook) return false
-        if (this.getNumberOfPhones == other.getNumberOfPhones){
-            for (phone in allPhones) {
-                if (this.humanByPhone(phone) != other.humanByPhone(phone)) {
-                    return false
-                }
-            }
+        if (this.getNumberOfPhones == other.getNumberOfPhones) {
+            if (book != other.book) return false
             return true
         }
         return false
