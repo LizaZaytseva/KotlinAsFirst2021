@@ -289,48 +289,35 @@ fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
  * Если все три точки совпадают, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  */
 
-fun hexagonByThreeConsPoints(ab: HexSegment, bc: HexSegment, ac: HexSegment): Hexagon {
-    val maxSegment = if (ab.length() > bc.length()) {
-        if (ab.length() > ac.length()) {
-            ab
-        } else {
-            ac
-        }
-    } else {
-        if (bc.length() > ac.length()) {
-            bc
-        } else {
-            ac
-        }
-    }
-    val radius = maxSegment.length()
-    return Hexagon(maxSegment.end.move(maxSegment.direction().next().next(), radius), radius)
-}
-
 
 fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     if (a == b && b == c) {
         return Hexagon(a, 0)
     }
-    /*
-    var numberOfSegments = 0
-    val abSegment = HexSegment(a, b)
-    val bcSegment = HexSegment(b, c)
-    val acSegment = HexSegment(a, c)
-    if (abSegment.isValid()) numberOfSegments++
-    if (bcSegment.isValid()) numberOfSegments++
-    if (acSegment.isValid()) numberOfSegments++
-    if (numberOfSegments == 3) {
-        if (abSegment.isParallel(bcSegment) && acSegment.isParallel(bcSegment)) {
-            return hexagonByThreeConsPoints(abSegment, bcSegment, acSegment)
-        }
-    }
-
-     */
 
     return hexagonByThreeNonConsPoints(a, b, c)
 }
 
+
+fun fastIntersectCheck(a: HexPoint, b: HexPoint, set: Set<HexPoint>, i: Int): Hexagon? {
+    var segment = HexSegment(a.move(Direction.UP_RIGHT, i), a.move(Direction.UP_LEFT, i))
+
+    for (j in 0 until 6) {
+        val result = segment.getPoints()
+        val intersect = result.intersect(set)
+        if (intersect.isNotEmpty()) {
+            for (point in intersect) {
+                if (b.distance(point) == i) {
+                    return Hexagon(point, i)
+                }
+            }
+        }
+
+        segment = HexSegment(segment.end, segment.end.move(segment.direction().next(), i))
+    }
+    return null
+
+}
 
 fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
     val maxDistance = maxOf(a.distance(b), b.distance(c), a.distance(c))
@@ -340,12 +327,10 @@ fun hexagonByThreeNonConsPoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon?
 
         val ab = aPoints.intersect(bPoints)
 
-        for (point in ab) {
-            if (c.distance(point) == i) {
-                return Hexagon(point, i)
-            }
+        val intersect = fastIntersectCheck(b, c, ab, i)
+        if (intersect != null) {
+            return intersect
         }
-
     }
 
     return null
