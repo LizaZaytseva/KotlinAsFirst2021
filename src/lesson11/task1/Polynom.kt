@@ -126,12 +126,13 @@ class Polynom(vararg coeffs: Double) {
      *
      * Если A / B = C и A % B = D, то A = B * C + D и степень D меньше степени B
      */
-    operator fun div(other: Polynom): Polynom {
-        val dividendCoeffs = coeffs
+
+    private fun division(other: Polynom): Pair<Polynom, Polynom> {
+        val dividendCoeffs = coeffs.clone()
         val otherDegree = other.degree()
         val thisDegree = this.degree()
         if (other.degree() > thisDegree) {
-            return Polynom(0.0)
+            return Pair(Polynom(0.0), this)
         }
         val result = mutableListOf<Double>()
         for (position in 0..(thisDegree - otherDegree)) {
@@ -143,17 +144,19 @@ class Polynom(vararg coeffs: Double) {
                 currentSubtrahend[i] = other.coeffs[i] * currentFraction
             }
             for (i in 0..otherDegree) {
-                dividendCoeffs[i] -= currentSubtrahend[i]
+                dividendCoeffs[i + position] -= currentSubtrahend[i]
             }
 
         }
-        return Polynom(*result.toDoubleArray())
+        return Pair(Polynom(*result.toDoubleArray()), Polynom(*dividendCoeffs))
     }
+
+    operator fun div(other: Polynom): Polynom = division(other).first
 
     /**
      * Взятие остатка
      */
-    operator fun rem(other: Polynom): Polynom = TODO()
+    operator fun rem(other: Polynom): Polynom = division(other).second
 
     /**
      * Сравнение на равенство
