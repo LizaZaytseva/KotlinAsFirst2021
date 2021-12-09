@@ -436,7 +436,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     }
     for (line in File(inputName).readLines()) {
 
-        if (line != "\t " && !line.matches(Regex("\\t ")) && line.isBlank()) {
+        if (line.isBlank()) {
 
 
             if (!prevWasEmpty) {
