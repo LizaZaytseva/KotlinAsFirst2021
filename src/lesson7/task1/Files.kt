@@ -319,8 +319,6 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
 
 
 
-// Есть какой-то гарантированный способ знать, что правильно решил задачу?
-// Потому что уже несколько раз решение проходило в котоеде, а потом на коком-то из ресабмитов выдавало неверный вариант
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
 
     var sOpened = false
