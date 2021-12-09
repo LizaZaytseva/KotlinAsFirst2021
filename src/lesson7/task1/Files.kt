@@ -430,7 +430,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     writer.write("<html><body>")
     var prevWasEmpty = true
     if (File(inputName).readLines().isEmpty() ||
-        File(inputName).readLines()[0] == " " || File(inputName).readLines().size == 1 && File(inputName).readLines()[0].isBlank()) {
+        File(inputName).readLines().size == 1 && File(inputName).readLines()[0].isBlank()
+    ) {
         writer.write("<p></p>")
     }
     for (line in File(inputName).readLines()) {
