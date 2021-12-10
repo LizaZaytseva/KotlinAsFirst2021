@@ -339,9 +339,16 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             if (bIndex == iIndex) {
                 if (bIndex == -1) {
                     startIndex = 0
-                } else if (bIndex == str.indexOf("***", startIndex)){
+                } else if (bIndex == str.indexOf("***", startIndex)) {
+                    var oldValue: String
+                    var newValue: String
+
                     if (!bOpened and !iOpened) {
-                        str = str.replaceFirst("**", "<b>")
+
+                        oldValue = "**"
+                        newValue = "<b>"
+
+                        //str = str.replaceFirst("**", "<b>")
                         bOpened = true
                         bOpener = bIndex
 
@@ -350,58 +357,113 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                     } else if (bOpened and iOpened) {
                         if (bOpener < iOpener) {
 
-                            str = str.replaceFirst("*", "</i>")
+                            oldValue = "*"
+                            newValue = "</i>"
+
+                            //str = str.replaceFirst("*", "</i>")
                             iOpened = false
 
                             startIndex = iIndex + 1
 
                         } else {
-                            str = str.replaceFirst("**", "</b>")
+
+                            oldValue = "**"
+                            newValue = "</b>"
+
+                            //str = str.replaceFirst("**", "</b>")
                             bOpened = false
 
                             startIndex = bIndex + 1
 
                         }
                     } else if (bOpened) {
-                        str = str.replaceFirst("**", "</b>")
+
+                        oldValue = "**"
+                        newValue = "</b>"
+
+                        //str = str.replaceFirst("**", "</b>")
                         bOpened = false
                         startIndex = bIndex + 1
                     } else {
-                        str = str.replaceFirst("*", "</i>")
+                        oldValue = "*"
+                        newValue = "</i>"
+
+                        //str = str.replaceFirst("*", "</i>")
                         iOpened = false
                         startIndex = iIndex + 1
                     }
+
+                    str = str.replaceFirst(oldValue, newValue) /////
+
                 } else {
                     startIndex = bIndex + 1
+
+                    var oldValue: String
+                    var newValue: String
+
                     if (bOpened) {
-                        str = str.replaceFirst("**", "</b>")
+                        oldValue = "**"
+                        newValue = "</b>"
+
+                        //str = str.replaceFirst("**", "</b>")
                         bOpened = false
                     } else {
-                        str = str.replaceFirst("**", "<b>")
+                        oldValue = "**"
+                        newValue = "<b>"
+
+                        //str = str.replaceFirst("**", "<b>")
                         bOpened = true
                         bOpener = bIndex
                     }
+
+                    str = str.replaceFirst(oldValue, newValue) /////
                 }
             } else if (((bIndex < iIndex) and (bIndex != -1)) or (iIndex == -1)) {
                 startIndex = bIndex + 1
+
+                var oldValue: String
+                var newValue: String
+
                 if (bOpened) {
-                    str = str.replaceFirst("**", "</b>")
+
+                    oldValue = "**"
+                    newValue = "</b>"
+
+                    //str = str.replaceFirst("**", "</b>")
                     bOpened = false
                 } else {
-                    str = str.replaceFirst("**", "<b>")
+
+                    oldValue = "**"
+                    newValue = "<b>"
+
+                    //str = str.replaceFirst("**", "<b>")
                     bOpened = true
                     bOpener = bIndex
                 }
+
+                str = str.replaceFirst(oldValue, newValue) /////
             } else if ((bIndex > iIndex) or (bIndex == -1)) {
+
+                var oldValue: String
+                var newValue: String
+
                 startIndex = iIndex + 1
                 if (iOpened) {
-                    str = str.replaceFirst("*", "</i>")
+                    oldValue = "*"
+                    newValue = "</i>"
+
+                    //str = str.replaceFirst("*", "</i>")
                     iOpened = false
                 } else {
-                    str = str.replaceFirst("*", "<i>")
+                    oldValue = "*"
+                    newValue = "<i>"
+
+                    //str = str.replaceFirst("*", "<i>")
                     iOpened = true
                     iOpener = bIndex
                 }
+
+                str = str.replaceFirst(oldValue, newValue) /////
             }
 
         }
@@ -410,13 +472,15 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         while (startIndex != 0) {
             startIndex = str.indexOf("~~", startIndex) + 1
             if (startIndex != 0) {
+                var newValue: String
                 if (sOpened) {
-                    str = str.replaceFirst("~~", "</s>")
+                    newValue = "</s>"
                     sOpened = false
                 } else {
-                    str = str.replaceFirst("~~", "<s>")
+                    newValue = "<s>"
                     sOpened = true
                 }
+                str = str.replaceFirst("~~", newValue)
             }
         }
 
