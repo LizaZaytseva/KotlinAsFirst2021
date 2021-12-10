@@ -403,8 +403,6 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 }
             } else if (((bIndex < iIndex) and (bIndex != -1)) or (iIndex == -1)) {
                 startIndex = bIndex + 1
-
-
                 if (bOpened) {
                     oldValue = "**"
                     newValue = "</b>"
@@ -467,14 +465,11 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     for (line in File(inputName).readLines()) {
 
         if (line.isBlank()) {
-
-
             if (!prevWasEmpty) {
                 writer.newLine()
                 writer.write("</p>")
                 prevWasEmpty = true
             }
-
         } else {
             if (prevWasEmpty) {
                 writer.newLine()

@@ -94,7 +94,7 @@ class OpenHashSet<T>(val capacity: Int) {
     override fun hashCode(): Int {
         var result = 13
 
-        val elementsForHash = Array<Any>(added) { 0 }
+        val elementsForHash = Array<Any?>(added) { null } as Array<T>
         var i = 0
 
         for (element in elements) {
