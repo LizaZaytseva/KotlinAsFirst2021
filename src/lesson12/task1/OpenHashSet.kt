@@ -22,8 +22,8 @@ class OpenHashSet<T>(val capacity: Int) {
     /**
      * Массив для хранения элементов хеш-таблицы
      */
-    internal val elements = Array<Any?>(capacity) { null }
-    // Cannot use 'T' as reified type parameter. Use a class instead. ???
+    internal val elements: Array<T?> = Array<Any?>(capacity) { null } as Array<T?>
+    // "Cannot use 'T' as reified type parameter. Use a class instead." ???
 
     /**
      * Число элементов в хеш-таблице
@@ -79,7 +79,7 @@ class OpenHashSet<T>(val capacity: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        other as OpenHashSet<Any?>
+        other as OpenHashSet<T>
         if (other.size != size) {
             return false
         }
