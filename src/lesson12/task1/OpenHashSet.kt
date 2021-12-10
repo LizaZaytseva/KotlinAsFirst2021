@@ -23,6 +23,7 @@ class OpenHashSet<T>(val capacity: Int) {
      * Массив для хранения элементов хеш-таблицы
      */
     internal val elements = Array<Any?>(capacity) { null }
+    // Cannot use 'T' as reified type parameter. Use a class instead. ???
 
     /**
      * Число элементов в хеш-таблице
@@ -39,6 +40,7 @@ class OpenHashSet<T>(val capacity: Int) {
      * Вернуть true, если элемент был успешно добавлен,
      * или false, если такой элемент уже был в таблице, или превышена вместимость таблицы.
      */
+    // Линейное пробирование
     fun add(element: T): Boolean {
         if (size < capacity && !contains(element)) {
             var key = element.hashCode() % capacity
@@ -93,7 +95,6 @@ class OpenHashSet<T>(val capacity: Int) {
         var result = 13
 
         val elementsForHash = Array<Any>(added) { 0 }
-
         var i = 0
 
         for (element in elements) {

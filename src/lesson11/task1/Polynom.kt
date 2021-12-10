@@ -146,7 +146,6 @@ class Polynom(vararg coeffs: Double) {
             for (i in 0..otherDegree) {
                 dividendCoeffs[i + position] -= currentSubtrahend[i]
             }
-
         }
         return Pair(Polynom(*result.toDoubleArray()), Polynom(*dividendCoeffs))
     }
