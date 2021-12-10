@@ -332,7 +332,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         var bOpener = -1
         var iOpener = -1
 
-        while (startIndex != 0){
+        while (startIndex != 0) {
             val bIndex = str.indexOf("**", startIndex)
             val iIndex = str.indexOf("*", startIndex)
 

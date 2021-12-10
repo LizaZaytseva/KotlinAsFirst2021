@@ -2,9 +2,6 @@
 
 package lesson12.task1
 
-import kotlinx.html.A
-import ru.spbstu.kotlin.typeclass.kind
-
 /**
  * Класс "хеш-таблица с открытой адресацией"
  *
@@ -35,7 +32,7 @@ class OpenHashSet<T>(val capacity: Int) {
     /**
      * Признак пустоты
      */
-    fun isEmpty(): Boolean = (size == 0)
+    fun isEmpty(): Boolean = size == 0
 
     /**
      * Добавление элемента.
@@ -44,7 +41,11 @@ class OpenHashSet<T>(val capacity: Int) {
      */
     fun add(element: T): Boolean {
         if (size < capacity && !contains(element)) {
-            elements[size] = element
+            var key = element.hashCode() % capacity
+            while (elements[key] != null) {
+                key = (key + 1) % capacity
+            }
+            elements[key] = element
             added += 1
             return true
         }
@@ -54,7 +55,20 @@ class OpenHashSet<T>(val capacity: Int) {
     /**
      * Проверка, входит ли заданный элемент в хеш-таблицу
      */
-    operator fun contains(element: T): Boolean = elements.contains(element)
+    operator fun contains(element: T): Boolean {
+        var key = element.hashCode() % capacity
+        if (elements[key] == element) return true
+
+        val start = key
+        key = (key + 1) % capacity
+
+        while (elements[key] != element && elements[key] != null && key != start) {
+            key = (key + 1) % capacity
+        }
+
+        if (elements[key] == element) return true
+        return false
+    }
 
     /**
      * Таблицы равны, если в них одинаковое количество элементов,
@@ -77,11 +91,24 @@ class OpenHashSet<T>(val capacity: Int) {
 
     override fun hashCode(): Int {
         var result = 13
+
+        val elementsForHash = Array<Any>(added) { 0 }
+
+        var i = 0
+
         for (element in elements) {
             if (element != null) {
-                result = (result * 31) + element.hashCode()
+                elementsForHash[i] = element
+                i++
             }
         }
+
+        elementsForHash.sort()
+
+        for (element in elementsForHash) {
+            result = (result * 31) + element.hashCode()
+        }
+
         return result
     }
 }
