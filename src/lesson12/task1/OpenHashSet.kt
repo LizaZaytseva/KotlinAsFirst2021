@@ -64,7 +64,7 @@ class OpenHashSet<T>(val capacity: Int) {
     }
 
 
-    // Немного самодеятельности
+    // Немного самодеятельности (ещё не доделал)
     fun delete(element: T): Boolean {
         if (!contains(element)) return false
         var key = generateKey(element)
