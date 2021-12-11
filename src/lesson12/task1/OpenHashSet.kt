@@ -40,6 +40,7 @@ class OpenHashSet<T>(val capacity: Int) {
      * Вернуть true, если элемент был успешно добавлен,
      * или false, если такой элемент уже был в таблице, или превышена вместимость таблицы.
      */
+    // Линейное пробирование
     private fun findKey(element: T): Int {
         var key = element.hashCode() % capacity
         if (key < 0) {
@@ -54,7 +55,6 @@ class OpenHashSet<T>(val capacity: Int) {
         return key
     }
 
-    // Линейное пробирование
     fun add(element: T): Boolean {
         if (size == capacity) return false
         val key = findKey(element)
@@ -65,36 +65,33 @@ class OpenHashSet<T>(val capacity: Int) {
     }
 
 
-    // Немного самодеятельности (ещё не доделал)
+    // Немного самодеятельности
     // P. S. "Ленивый алгоритм" с маркировкой мест удаления - для неудачников
-    /*
-    fun delete(element: T): Boolean {
-        if (!contains(element)) return false
-        var key = generateKey(element)
 
-        while (elements[key] != element) {
-            key = (key + 1) % capacity
+    fun delete(element: T): Boolean {
+        var key = findKey(element)
+
+        if (elements[key] == null) return false
+
+        var tail = (key + 1) % capacity
+
+        while (elements[tail] != null && tail != key) {
+            var currentFirstKey = elements[tail].hashCode() % capacity
+            if (currentFirstKey < 0) {
+                currentFirstKey += capacity
+            }
+
+            if ((tail < key && (currentFirstKey in (tail + 1)..key)) || (tail > key && (currentFirstKey <= key || currentFirstKey > tail))){
+                elements[key] = elements[tail]
+                key = tail
+            }
+            tail = (tail + 1) % capacity
         }
         elements[key] = null
-
-        var nextKey = (key + 1) % capacity
-
-        while (elements[nextKey] != null && generateKey(elements[nextKey]!!) == key) {
-            val hashCode = elements[nextKey].hashCode()
-
-            while (elements[nextKey].hashCode() == hashCode) {
-                elements[key] = elements[nextKey]
-                elements[nextKey] = null
-                key = (key + 1) % capacity
-                nextKey = (nextKey + 1) % capacity
-            }
-        }
 
         added--
         return true
     }
-
-     */
 
     /**
      * Проверка, входит ли заданный элемент в хеш-таблицу
