@@ -40,24 +40,25 @@ class OpenHashSet<T>(val capacity: Int) {
      * Вернуть true, если элемент был успешно добавлен,
      * или false, если такой элемент уже был в таблице, или превышена вместимость таблицы.
      */
-
-    private fun generateKey(element: T): Int {
+    private fun findKey(element: T): Int {
         var key = element.hashCode() % capacity
         if (key < 0) {
             key += capacity
+        }
+        if (elements[key] == null || elements[key] == element) return key
+        val start = key
+        key = (key + 1) % capacity
+        while (elements[key] != null && elements[key] != element && key != start) {
+            key = (key + 1) % capacity
         }
         return key
     }
 
     // Линейное пробирование
     fun add(element: T): Boolean {
-        if (size == capacity || contains(element)) {
-            return false
-        }
-        var key = generateKey(element)
-        while (elements[key] != null) {
-            key = (key + 1) % capacity
-        }
+        if (size == capacity) return false
+        val key = findKey(element)
+        if (elements[key] != null) return false
         elements[key] = element
         added += 1
         return true
@@ -65,6 +66,8 @@ class OpenHashSet<T>(val capacity: Int) {
 
 
     // Немного самодеятельности (ещё не доделал)
+    // P. S. "Ленивый алгоритм" с маркировкой мест удаления - для неудачников
+    /*
     fun delete(element: T): Boolean {
         if (!contains(element)) return false
         var key = generateKey(element)
@@ -91,22 +94,14 @@ class OpenHashSet<T>(val capacity: Int) {
         return true
     }
 
+     */
+
     /**
      * Проверка, входит ли заданный элемент в хеш-таблицу
      */
     operator fun contains(element: T): Boolean {
-        var key = generateKey(element)
+        val key = findKey(element)
         if (elements[key] == element) return true
-
-        val start = key
-        key = (key + 1) % capacity
-
-        while (elements[key] != element && elements[key] != null && key != start) {
-            key = (key + 1) % capacity
-        }
-
-        if (elements[key] == element) return true
-
         return false
     }
 
