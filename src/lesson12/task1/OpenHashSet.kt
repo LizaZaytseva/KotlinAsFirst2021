@@ -67,17 +67,26 @@ class OpenHashSet<T>(val capacity: Int) {
     // Немного самодеятельности
     fun delete(element: T): Boolean {
         if (!contains(element)) return false
-        val hashCode = element.hashCode()
         var key = generateKey(element)
+
         while (elements[key] != element) {
             key = (key + 1) % capacity
         }
         elements[key] = null
-        while (elements[(key + 1) % capacity].hashCode() == hashCode) {
-            elements[key] = elements[(key + 1) % capacity]
-            elements[(key + 1) % capacity] = null
-            key = (key + 1) % capacity
+
+        var nextKey = (key + 1) % capacity
+
+        while (elements[nextKey] != null && generateKey(elements[nextKey]!!) == key) {
+            val hashCode = elements[nextKey].hashCode()
+
+            while (elements[nextKey].hashCode() == hashCode) {
+                elements[key] = elements[nextKey]
+                elements[nextKey] = null
+                key = (key + 1) % capacity
+                nextKey = (nextKey + 1) % capacity
+            }
         }
+
         added--
         return true
     }
