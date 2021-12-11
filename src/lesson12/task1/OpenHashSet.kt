@@ -40,25 +40,51 @@ class OpenHashSet<T>(val capacity: Int) {
      * Вернуть true, если элемент был успешно добавлен,
      * или false, если такой элемент уже был в таблице, или превышена вместимость таблицы.
      */
+
+    private fun generateKey(element: T): Int {
+        var key = element.hashCode() % capacity
+        if (key < 0) {
+            key += capacity
+        }
+        return key
+    }
+
     // Линейное пробирование
     fun add(element: T): Boolean {
-        if (size < capacity && !contains(element)) {
-            var key = element.hashCode() % capacity
-            while (elements[key] != null) {
-                key = (key + 1) % capacity
-            }
-            elements[key] = element
-            added += 1
-            return true
+        if (size == capacity || contains(element)) {
+            return false
         }
-        return false
+        var key = generateKey(element)
+        while (elements[key] != null) {
+            key = (key + 1) % capacity
+        }
+        elements[key] = element
+        added += 1
+        return true
+    }
+
+    fun delete(element: T): Boolean {
+        if (!contains(element)) return false
+        val hashCode = element.hashCode()
+        var key = generateKey(element)
+        while (elements[key] != element) {
+            key = (key + 1) % capacity
+        }
+        elements[key] = null
+        while (elements[(key + 1) % capacity].hashCode() == hashCode) {
+            elements[key] = elements[(key + 1) % capacity]
+            elements[(key + 1) % capacity] = null
+            key = (key + 1) % capacity
+        }
+        added--
+        return true
     }
 
     /**
      * Проверка, входит ли заданный элемент в хеш-таблицу
      */
     operator fun contains(element: T): Boolean {
-        var key = element.hashCode() % capacity
+        var key = generateKey(element)
         if (elements[key] == element) return true
 
         val start = key
@@ -69,6 +95,7 @@ class OpenHashSet<T>(val capacity: Int) {
         }
 
         if (elements[key] == element) return true
+
         return false
     }
 
