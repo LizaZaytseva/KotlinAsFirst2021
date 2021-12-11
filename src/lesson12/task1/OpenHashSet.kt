@@ -63,6 +63,8 @@ class OpenHashSet<T>(val capacity: Int) {
         return true
     }
 
+
+    // Немного самодеятельности
     fun delete(element: T): Boolean {
         if (!contains(element)) return false
         val hashCode = element.hashCode()
