@@ -15,6 +15,8 @@ package lesson12.task1
  *
  * В конструктор хеш-таблицы передаётся её вместимость (максимальное количество элементов)
  */
+private const val PROBING_CONSTANT = 1
+
 class OpenHashSet<T>(val capacity: Int) {
 
     private var added = 0
@@ -22,7 +24,7 @@ class OpenHashSet<T>(val capacity: Int) {
     /**
      * Массив для хранения элементов хеш-таблицы
      */
-    internal val elements: Array<T?> = Array<Any?>(capacity) { null } as Array<T?>
+    internal val elements = Array<Any?>(capacity) { null }
     // "Cannot use 'T' as reified type parameter. Use a class instead." ???
 
     /**
@@ -48,12 +50,14 @@ class OpenHashSet<T>(val capacity: Int) {
         }
         if (elements[key] == null || elements[key] == element) return key
         val start = key
-        key = (key + 1) % capacity
+        key = getNextKey(key)
         while (elements[key] != null && elements[key] != element && key != start) {
-            key = (key + 1) % capacity
+            key = getNextKey(key)
         }
         return key
     }
+
+    private fun getNextKey(key: Int): Int = (key + PROBING_CONSTANT) % capacity
 
     fun add(element: T): Boolean {
         if (size == capacity) return false
@@ -68,25 +72,28 @@ class OpenHashSet<T>(val capacity: Int) {
     // P. S. "Ленивый алгоритм" с маркировкой мест удаления - для неудачников
 
     fun delete(element: T): Boolean {
-        var key = findKey(element)
+        var deletionKey = findKey(element)
 
-        if (elements[key] == null) return false
+        if (elements[deletionKey] == null) return false
 
-        var tail = (key + 1) % capacity
+        var currentKey = getNextKey(deletionKey)
 
-        while (elements[tail] != null && tail != key) {
-            var currentFirstKey = elements[tail].hashCode() % capacity
-            if (currentFirstKey < 0) {
-                currentFirstKey += capacity
+        while (elements[currentKey] != null && currentKey != deletionKey) {
+            var firstKey = elements[currentKey].hashCode() % capacity
+            if (firstKey < 0) {
+                firstKey += capacity
             }
 
-            if ((tail < key && (currentFirstKey in (tail + 1)..key)) || (tail > key && (currentFirstKey <= key || currentFirstKey > tail))){
-                elements[key] = elements[tail]
-                key = tail
+            if ((currentKey < deletionKey && (firstKey in (currentKey + 1)..deletionKey)) ||
+                (currentKey > deletionKey && (firstKey <= deletionKey || firstKey > currentKey))
+            ) {
+                elements[deletionKey] = elements[currentKey]
+                deletionKey = currentKey
             }
-            tail = (tail + 1) % capacity
+
+            currentKey = getNextKey(currentKey)
         }
-        elements[key] = null
+        elements[deletionKey] = null
 
         added--
         return true
@@ -97,8 +104,7 @@ class OpenHashSet<T>(val capacity: Int) {
      */
     operator fun contains(element: T): Boolean {
         val key = findKey(element)
-        if (elements[key] == element) return true
-        return false
+        return (elements[key] == element)
     }
 
     /**
@@ -108,7 +114,7 @@ class OpenHashSet<T>(val capacity: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        other as OpenHashSet<T>
+        other as OpenHashSet<Any?>
         if (other.size != size) {
             return false
         }
@@ -121,24 +127,12 @@ class OpenHashSet<T>(val capacity: Int) {
     }
 
     override fun hashCode(): Int {
-        var result = 13
-
-        val elementsForHash = Array<Any?>(added) { null } as Array<T>
-        var i = 0
-
+        var result = 0
         for (element in elements) {
             if (element != null) {
-                elementsForHash[i] = element
-                i++
+                result += element.hashCode()
             }
         }
-
-        elementsForHash.sort()
-
-        for (element in elementsForHash) {
-            result = (result * 31) + element.hashCode()
-        }
-
         return result
     }
 }

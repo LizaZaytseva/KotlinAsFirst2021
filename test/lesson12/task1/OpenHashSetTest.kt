@@ -45,13 +45,79 @@ class OpenHashSetTest {
     }
 
     @Test
+    fun delete() {
+        val set1 = OpenHashSet<String>(4)
+        assertTrue(set1.add("alpha"))
+        assertTrue(set1.add("beta"))
+        assertFalse(set1.delete("gamma"))
+        assertTrue(set1.add("gamma"))
+        assertTrue(set1.delete("alpha"))
+
+        val set2 = OpenHashSet<String>(3)
+        assertTrue(set2.add("beta"))
+        assertTrue(set2.add("gamma"))
+
+        assertEquals(set1, set2)
+        set1.add("omicron")
+
+        assertNotEquals(set1, set2)
+
+        val set3 = OpenHashSet<Int>(4)
+        assertTrue(set3.add(3))
+        assertTrue(set3.add(7))
+        assertTrue(set3.add(-1))
+
+        assertTrue(set3.delete(7))
+        assertFalse(set3.delete(7))
+
+        val set4 = OpenHashSet<Int>(5)
+
+        assertTrue(set4.add(-1))
+        assertTrue(set4.add(3))
+        assertTrue(set4.delete(3))
+        assertTrue(set4.add(3))
+        assertTrue(set4.add(4))
+        assertTrue(set3.add(4))
+
+        assertEquals(set3, set4)
+
+        val set5 = OpenHashSet<Int>(4)
+        assertTrue(set5.add(0))
+        assertTrue(set5.add(1))
+        assertTrue(set5.add(2))
+        assertTrue(set5.add(4))
+
+        assertTrue(set5.delete(1))
+
+        assertTrue(set5.contains(0))
+        assertFalse(set5.contains(1))
+        assertTrue(set5.contains(2))
+        assertTrue(set5.contains(4))
+
+        val set6 = OpenHashSet<Int>(5)
+
+        assertTrue(set6.add(0))
+        assertTrue(set6.add(2))
+        assertTrue(set6.add(4))
+
+        assertEquals(set5, set6)
+
+
+    }
+
+
+    @Test
     @Tag("10")
     fun contains() {
         val set = OpenHashSet<Int>(8)
         set.add(1)
         set.add(3)
         set.add(6)
+        set.add(11)
+        set.add(14)
         assertTrue(3 in set)
+        assertTrue(11 in set)
+        assertTrue(14 in set)
         assertFalse(4 in set)
     }
 
@@ -85,8 +151,6 @@ class OpenHashSetTest {
         set2.add(1)
         set2.add(3)
         set2.add(6)
-        val hashCode1 = set1.hashCode()
-        val hachCode2 = set2.hashCode()
         assertTrue(set1.hashCode() == set2.hashCode())
 
         val set3 = OpenHashSet<Char>(8)

@@ -131,7 +131,7 @@ class Polynom(vararg coeffs: Double) {
         val dividendCoeffs = coeffs.clone()
         val otherDegree = other.degree()
         val thisDegree = this.degree()
-        if (other.degree() > thisDegree) {
+        if (otherDegree > thisDegree) {
             return Pair(listOf(0.0), coeffs)
         }
         val result = mutableListOf<Double>()
@@ -165,12 +165,8 @@ class Polynom(vararg coeffs: Double) {
         if (this === other) return true
         if (other !is Polynom) return false
         if (this.degree() != other.degree()) return false
-        for (i in this.coeffs.indices) {
-            if (this.coeff(i) != other.coeff(i)) {
-                return false
-            }
-        }
-        return true
+        if (this.coeffs.contentEquals(other.coeffs)) return true
+        return false
     }
 
     /**
