@@ -34,7 +34,7 @@ class Polynom(vararg coeffs: Double) {
         } else {
             val result = DoubleArray(coeffs.size - zeroes)
             for (i in zeroes until coeffs.size) {
-                result[i - zeroes] = coeffs[i]
+                result[i - zeroes] = coeffs[coeffs.size - 1 - i + zeroes]
             }
             this.coeffs = result
         }
@@ -48,7 +48,7 @@ class Polynom(vararg coeffs: Double) {
         if (i > degree()) {
             return 0.0
         }
-        return coeffs[coeffs.size - (1 + i)]
+        return coeffs[i]
     }
 
     /**
@@ -57,7 +57,7 @@ class Polynom(vararg coeffs: Double) {
     fun getValue(x: Double): Double {
         var sum = 0.0
         for (i in coeffs.indices) {
-            sum += x.pow(i) * coeff(i)
+            sum += x.pow(i) * coeffs[i]
         }
         return sum
     }
@@ -77,13 +77,23 @@ class Polynom(vararg coeffs: Double) {
 
     private fun plusMinus(other: Polynom, type: Int): Polynom {
         val newDegree = maxOf(this.degree(), other.degree())
+        val thisCoeff: (Int) -> Double
+        val otherCoeff: (Int) -> Double
+        if (newDegree == this.degree()) {
+            thisCoeff = { i: Int -> this.coeffs[i] }
+            otherCoeff = { i: Int -> other.coeff(i) }
+        } else {
+            thisCoeff = { i: Int -> this.coeff(i) }
+            otherCoeff = { i: Int -> other.coeffs[i] }
+        }
         val newCoeffs = DoubleArray(newDegree + 1)
 
+
         for (i in 0..newDegree) {
-            newCoeffs[i] = this.coeff(i) + type * other.coeff(i)
+            newCoeffs[newDegree - i] = thisCoeff(i) + type * otherCoeff(i)
         }
 
-        return Polynom(*newCoeffs.reversed().toDoubleArray())
+        return Polynom(*newCoeffs)
     }
 
     operator fun plus(other: Polynom): Polynom = plusMinus(other, 1)
@@ -92,9 +102,10 @@ class Polynom(vararg coeffs: Double) {
      * Смена знака (при всех слагаемых)
      */
     operator fun unaryMinus(): Polynom {
-        val newCoeffs = DoubleArray(this.degree() + 1)
+        val degree = this.degree()
+        val newCoeffs = DoubleArray(degree + 1)
         for (i in newCoeffs.indices) {
-            newCoeffs[i] = -coeffs[i]
+            newCoeffs[degree - i] = -coeffs[i]
         }
         return Polynom(*newCoeffs)
     }
@@ -112,10 +123,10 @@ class Polynom(vararg coeffs: Double) {
         val newCoeffs = DoubleArray(newDegree + 1)
         for (i in 0..this.degree()) {
             for (j in 0..other.degree()) {
-                newCoeffs[i + j] += this.coeff(i) * other.coeff(j)
+                newCoeffs[newDegree - i - j] += this.coeff(i) * other.coeff(j)
             }
         }
-        return Polynom(*newCoeffs.reversed().toDoubleArray())
+        return Polynom(*newCoeffs)
     }
 
     /**
@@ -128,7 +139,7 @@ class Polynom(vararg coeffs: Double) {
      */
 
     private fun division(other: Polynom): Pair<List<Double>, DoubleArray> {
-        val dividendCoeffs = coeffs.clone()
+        val dividendCoeffs = coeffs.reversed().toDoubleArray()
         val otherDegree = other.degree()
         val thisDegree = this.degree()
         if (otherDegree > thisDegree) {
@@ -141,7 +152,7 @@ class Polynom(vararg coeffs: Double) {
 
             val currentSubtrahend = DoubleArray(otherDegree + 1)
             for (i in currentSubtrahend.indices) {
-                currentSubtrahend[i] = other.coeffs[i] * currentFraction
+                currentSubtrahend[i] = other.coeffs[otherDegree - i] * currentFraction
             }
             for (i in 0..otherDegree) {
                 dividendCoeffs[i + position] -= currentSubtrahend[i]
