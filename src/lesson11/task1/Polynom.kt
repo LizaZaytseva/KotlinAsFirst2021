@@ -80,11 +80,11 @@ class Polynom(vararg coeffs: Double) {
         val thisCoeff: (Int) -> Double
         val otherCoeff: (Int) -> Double
         if (newDegree == this.degree()) {
-            thisCoeff = { i: Int -> this.coeffs[i] }
-            otherCoeff = { i: Int -> other.coeff(i) }
+            thisCoeff = { i -> this.coeffs[i] }
+            otherCoeff = { i -> other.coeff(i) }
         } else {
-            thisCoeff = { i: Int -> this.coeff(i) }
-            otherCoeff = { i: Int -> other.coeffs[i] }
+            thisCoeff = { i -> this.coeff(i) }
+            otherCoeff = { i -> other.coeffs[i] }
         }
         val newCoeffs = DoubleArray(newDegree + 1)
 
